@@ -1,31 +1,34 @@
-# Process Execution
+# Execution
 
-## Start with the process event
+## Objective
 
-For Sysmon Event ID 1 or Security Event ID 4688, capture:
+Identify suspicious process execution and determine whether a command or utility was used in an unusual context.
 
-- Host and event timestamp.
-- User and logon context.
-- Image path and complete command line.
-- Parent image and parent command line.
-- Process ID and, for Sysmon, ProcessGuid / ParentProcessGuid.
-- Hash and signature, where available.
+## Telemetry to review
 
-## Investigation pivots
+- Windows Security event 4688, when process creation auditing is enabled.
+- Sysmon Event ID 1 for process creation.
+- PowerShell operational logs, including script-block logging where configured.
+- EDR process trees and command-line telemetry.
+- Parent process, user, integrity level, executable path, hash and signature.
 
-1. **Parent process:** is the parent expected for this application and host role?
-2. **Execution path:** is the binary in a protected application directory or a user-writable location?
-3. **Command line:** are there unusual arguments, encoded content, remote URLs or unexpected file paths?
-4. **Identity:** is the account expected to run this process on this host?
-5. **Follow-on activity:** did it create files, change registry keys, spawn children, access LSASS or make network connections?
-6. **Prevalence:** does the same binary/hash/command appear on other systems?
+## Analysis method
 
-Sysmon ProcessGuid is preferable to PID alone for process correlation because PIDs can be reused. Confirm which fields your event format actually extracts.
+1. Identify the process and preserve the complete command line.
+2. Review parent-child relationships and the initiating account.
+3. Check executable path, signature, hash and prevalence.
+4. Compare the command with expected administration on that host.
+5. Correlate execution with file creation, registry changes, authentication and network connections.
+6. Assess whether the command completed successfully; do not infer success from process creation alone.
 
-## Interpretation
+## Native tools and context
 
-PowerShell, cmd.exe, WMI and other administration tools are common in legitimate environments. Their presence alone is not a finding. A process-creation event establishes that process creation was recorded; it does not prove every command completed successfully.
+Legitimate utilities such as PowerShell, WMIC, command shell and Windows administration tools can be abused. Their presence is not a detection by itself. Stronger signals include unusual parent processes, encoded or obfuscated arguments, execution from user-writable paths, unexpected remote targets, rare account/host combinations and suspicious follow-on activity.
 
-## Record the result
+## Investigation record
 
-Keep the raw event reference, query, time range, process tree, relevant file/network pivots, benign explanation considered and unresolved questions. Avoid labelling a process malicious based only on its name.
+Document the process GUID or event identifier, host, user, process and parent process, command line, timestamp, associated artefacts, benign explanations considered and confidence.
+
+## Detection engineering
+
+Prefer behaviour-based combinations over simple executable-name matches. Tune against known IT automation, software deployment, endpoint management and administrator workflows.
