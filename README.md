@@ -34,6 +34,7 @@ does not claim unperformed full-index validation.
 | [Windows artefacts](05-Digital-Forensics/windows-artifacts.md) | Forensic value and limitations of common artefacts |
 | [Incident response](06-Incident-Response/response-recommendations.md) | Containment through recovery |
 | [Evidence catalogue](07-Evidence/evidence-catalogue.md) | Evidence register and handling standard |
+| [Security handling](SECURITY.md) | Credential hygiene and secret scanning response |
 | [Timeline](07-Evidence/intrusion-timeline.md) | Timestamp normalisation and event sequencing |
 | [Enterprise intrusion case study](08-Simulated-Investigation/) | Reconstructed Northstar scenario |
 | [BOTSv3 investigation](09-BOTSv3-Investigation/) | Attributed event extracts, analysis pipeline, findings and validation hunts |
