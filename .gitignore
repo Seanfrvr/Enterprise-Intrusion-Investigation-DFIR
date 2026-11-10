@@ -1,8 +1,8 @@
 # Full BOTSv3 archive and local lab data
-09-BOTSv3-Investigation/data/raw/
+botsv3-investigation/data/raw/
 
 # Generated pipeline output
-09-BOTSv3-Investigation/output/
+botsv3-investigation/output/
 
 # Local Python state
 __pycache__/
