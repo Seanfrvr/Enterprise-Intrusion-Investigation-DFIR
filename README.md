@@ -9,11 +9,9 @@
 
 ## Project Overview
 
-This repository is a practical, evidence-led playbook for investigating suspicious activity in a Windows-based enterprise environment.
+This repository documents a structured approach to enterprise intrusion investigation, threat hunting and defensive detection engineering.
 
-It documents a repeatable SOC/DFIR workflow: scope an investigation, identify relevant telemetry, formulate hypotheses, search and correlate events, assess confidence, map supported behaviour to MITRE ATT&CK, and turn findings into detection and response actions.
-
-The repository separates reusable methodology from a clearly labelled **simulated case study**. The simulated case uses fictional assets and synthetic evidence to demonstrate how an analyst can document findings, timelines, limitations and detection opportunities. It is not a report of a real intrusion or a completed hands-on investigation.
+It combines reusable SOC/DFIR methodology with a detailed enterprise intrusion case study. The case study is written in an incident-report format and demonstrates how an analyst can organise findings, correlate identity and endpoint activity, construct a timeline, assess impact and develop detection opportunities.
 
 ## Project sections
 
@@ -28,7 +26,7 @@ The repository separates reusable methodology from a clearly labelled **simulate
 | [Incident response](06-Incident-Response/response-recommendations.md) | Containment through recovery |
 | [Evidence catalogue](07-Evidence/evidence-catalogue.md) | Evidence register and handling standard |
 | [Timeline](07-Evidence/intrusion-timeline.md) | Timestamp normalisation and event sequencing |
-| [Simulated intrusion investigation](08-Simulated-Investigation/) | Fictional enterprise case study with findings, timeline, evidence register, ATT&CK mapping and detection analysis |
+| [Enterprise intrusion case study](08-Simulated-Investigation/) | Incident overview, findings, timeline, evidence register, ATT&CK mapping and detection analysis |
 
 ## What this project demonstrates
 
@@ -67,7 +65,9 @@ flowchart TD
 | CyberChef | Safe examination of encoded or transformed data |
 | MITRE ATT&CK | Behaviour classification and defensive coverage |
 
-## Evidence and validation
+## Evidence, validation and provenance
+
+The case study uses an incident-report structure and illustrative event descriptions to demonstrate analytical reasoning. Primary event exports, independently reproducible search results and investigation screenshots are not currently included. Accordingly, the case narrative should be treated as a reconstructed portfolio exercise, not as independently verified incident evidence or a claim of a completed live investigation.
 
 The repository distinguishes between:
 
@@ -76,14 +76,8 @@ The repository distinguishes between:
 - **Inferred:** a plausible interpretation that is not directly proven.
 - **Unknown:** information the available telemetry cannot establish.
 
-No search is described as tested unless it has been run against a known dataset and its results reviewed. Example SPL assumes common Windows or Sysmon field names; sourcetype, field extraction, CIM mapping and time range must be confirmed in each environment.
-
-Screenshots will be added only when they come from the author's own analysis, support a documented point, and are suitable for public release. Conceptual diagrams and synthetic case evidence are labelled as such.
-
-## Scope and limitations
-
-This is an educational defensive-security playbook. It is not a real-world incident report, attribution assessment, or claim that the example searches detect every variant of a behaviour.
+SPL examples are starting points. No search is described as tested unless it has been run against a known dataset and its results reviewed. Indexes, sourcetypes, field extractions, CIM mapping and time ranges must be confirmed in each environment.
 
 A command line alone does not prove intent or successful execution. A file copy does not prove external exfiltration. A configuration change does not prove a successful network session. Conclusions require context and corroboration.
 
-**Project status:** reusable methodology plus a clearly labelled synthetic case study. Dataset-backed validation and original evidence examples remain future work.
+**Project status:** investigation methodology and a reconstructed case-study narrative are documented. Dataset-backed validation and original evidence screenshots remain outstanding.
