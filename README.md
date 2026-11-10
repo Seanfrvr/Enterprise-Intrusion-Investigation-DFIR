@@ -51,20 +51,16 @@ does not claim unperformed full-index validation.
 
 ## Investigation workflow
 
-\`\`\`mermaid
-flowchart TD
- A[Define scope and investigative questions] --> B[Identify sources and coverage]
- B --> C[Acquire and preserve relevant records]
- C --> D[Inspect raw events and validate fields]
- D --> E[Correlate identity, process, host and network activity]
- E --> F{Does evidence support the hypothesis?}
- F -->|Yes| G[Document observation, confidence and impact]
- F -->|No / incomplete| H[Record alternatives and evidence gaps]
- H --> D
- G --> I[Map supported behaviour to ATT&CK]
- I --> J[Develop, test and tune detections]
- J --> K[Recommend proportionate response actions]
-\`\`\`
+1. Define the scope and investigative questions.
+2. Identify available sources and coverage.
+3. Acquire and preserve relevant records.
+4. Inspect raw events and validate extracted fields.
+5. Correlate identity, process, host and network activity.
+6. Test the hypothesis against the evidence.
+7. Document findings, confidence and impact.
+8. Map supported behaviour to ATT&CK.
+9. Develop, test and tune detections.
+10. Recommend proportionate response actions.
 
 ## Tools and technologies
 
