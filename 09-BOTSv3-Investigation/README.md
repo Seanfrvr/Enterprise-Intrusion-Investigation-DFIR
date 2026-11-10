@@ -27,8 +27,7 @@ They contain 83 records across:
 - Azure AD sign-ins
 - Office 365 management activity
 
-The records are derived from the public fixture files. The AWS fixture has been sanitized to replace temporary credential identifiers. See
-[dataset provenance](dataset-provenance.md) for the original upstream source paths and blob SHAs. These are selected event slices, not the
+The records are derived from the public fixture files. The AWS fixture has been sanitized to replace temporary credential identifiers. Original source paths and blob SHAs are recorded in [dataset provenance](dataset-provenance.md). These are selected event slices, not the
 complete BOTSv3 archive or a complete export of `index=botsv3`.
 
 ## Investigation thread
@@ -61,14 +60,14 @@ python -m unittest discover -s pipeline -p "test_*.py" -v
 ```
 
 The pipeline writes fixture integrity hashes, inventory, normalized CSV and
-UTC timeline outputs. GitHub Actions runs the same tests on changes.
+UTC timeline outputs. GitHub Actions is configured to run the same tests when relevant files change.
 
 ## Validation boundary
 
-<badge>Fixture-backed</badge> means the raw records are present in this repo
+**Fixture-backed:** means the raw records are present in this repo
 and traceable to their upstream source files.
 
-<badge>Full-index validation pending</badge> means the complete BOTSv3 archive
+**Full-index validation pending:** means the complete BOTSv3 archive
 has not been acquired and searched in the user's Splunk environment. The
 hunt workbook contains queries to execute and validate later. No full-index
 search results or screenshots are claimed here.
