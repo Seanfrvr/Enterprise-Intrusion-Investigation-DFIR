@@ -13,6 +13,9 @@
 7. Documented six findings with fixture references and confidence limits.
 8. Prepared Splunk hunts for full index validation.
 9. Added GitHub Actions to run the fixture pipeline tests.
+10. Manually ran the GitHub Actions workflow successfully. The run generated
+    an artifact containing the fixture-scoped inventory, integrity manifest,
+    normalized CSV and UTC timeline (83 records total; 36 timestamped).
 
 ## Not completed
 
