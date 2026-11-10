@@ -3,7 +3,7 @@
 
 This does not download BOTSv3 or query Splunk. It parses only the six small
 fixture slices in ../data/fixtures and emits reproducible inventory/timeline
-artifacts. Raw records are retained unchanged.
+artifacts. The pipeline reads the committed fixture files without modifying them. The AWS source fixture has been sanitized before commit; see dataset-provenance.md.
 """
 from __future__ import annotations
 
