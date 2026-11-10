@@ -5,14 +5,15 @@ SOC investigation and a repeatable analysis pipeline.
 
 ## Start here
 
-1. [Dataset provenance](dataset-provenance.md)
-2. [Fixture analysis report](analysis-report.md)
-3. [Run the local pipeline](pipeline/README.md)
-4. [Pipeline source](pipeline/analyze.py)
-5. [Hunt workbook for full-index validation](hunt-workbook.md)
-6. [Analyst notebook](analyst-notebook.md)
-7. [Evidence log](evidence-log.md)
-8. [Validation status](validation-status.md)
+1. [Full dataset acquisition](full-dataset-acquisition.md)
+2. [Dataset provenance](dataset-provenance.md)
+3. [Fixture analysis report](analysis-report.md)
+4. [Run the local pipeline](pipeline/README.md)
+5. [Pipeline source](pipeline/analyze.py)
+6. [Hunt workbook for full-index validation](hunt-workbook.md)
+7. [Analyst notebook](analyst-notebook.md)
+8. [Evidence log](evidence-log.md)
+9. [Validation status](validation-status.md)
 
 ## Data included
 
