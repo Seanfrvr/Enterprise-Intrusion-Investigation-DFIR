@@ -51,7 +51,7 @@ This repository currently contains the investigation plan and reproducible start
 
 ## Published dataset details
 
-The upstream project publishes BOTSv3 as a 320.1 MB pre-indexed Splunk dataset, provides the historical MD5 reference and lists the included sourcetypes and software versions. Installation instructions specify extracting the dataset under `$SPLUNK_HOME/etc/apps`, restarting Splunk and querying `index=botsv3 earliest=0`. Review the [upstream instructions](https://github.com/splunk/botsv3) before installation; the listed Splunk and add-on versions are historical, so compatibility must be checked in the local environment. <https://github.com/splunk/botsv3>
+The upstream project publishes BOTSv3 as a 320.1 MB pre-indexed Splunk dataset, provides the historical MD5 reference and lists the included sourcetypes and software versions. Installation instructions specify extracting the dataset under `$SPLUNK_HOME/etc/apps`, restarting Splunk and querying `index=botsv3 earliest=0`. Review the [upstream instructions](https://github.com/splunk/botsv3) before installation; the listed Splunk and add-on versions are historical, so compatibility must be checked in the local environment.
 
 ## Evidence standard
 
