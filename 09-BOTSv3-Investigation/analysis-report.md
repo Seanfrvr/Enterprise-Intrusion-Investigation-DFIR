@@ -47,9 +47,9 @@ only the selected extracts, not the complete BOTSv3 index.
 
 ## Findings
 
-### F-01 — AWS console access without MFA and S3 bucket reconnaissance
+### F-01, AWS console access without MFA and S3 bucket reconnaissance
 
-**Source:** `01-aws-recon-bstoll.jsonl`, records 1–20  
+**Source:** `01-aws-recon-bstoll.jsonl`, records 1to20  
 **Observed identity:** IAM user `bstoll`  
 **Observed source IPs:** `107.77.212.175`, `157.97.121.132`
 
@@ -73,9 +73,9 @@ GuardDuty and network telemetry.
 **Confidence:** high for the recorded actions; moderate for malicious
 reconnaissance; no conclusion on data access or exfiltration.
 
-### F-02 — BSTOLL-L logon excerpt is insufficient to rule out remote access
+### F-02, BSTOLL-L logon excerpt is insufficient to rule out remote access
 
-**Source:** `02-bstoll-l-endpoint.jsonl`, records 1–11  
+**Source:** `02-bstoll-l-endpoint.jsonl`, records 1to11  
 **Host:** `BSTOLL-L`
 
 The selected excerpt contains successful logon events for SYSTEM (type 5),
@@ -94,9 +94,9 @@ process telemetry.
 **Confidence:** high for the listed records; low for any broader negative
 claim.
 
-### F-03 — Coinhive-related DNS activity from an internal client
+### F-03, Coinhive-related DNS activity from an internal client
 
-**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1–12  
+**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1to12  
 **Client:** `192.168.247.131`  
 **Queried names:** `coinhive.com` and multiple `wsNNN.coinhive.com` names
 
@@ -119,9 +119,9 @@ across the full dataset.
 **Confidence:** high for the DNS queries and responses; moderate for Coinhive
 infrastructure contact; insufficient alone to prove cryptojacking.
 
-### F-04 — Hidden PowerShell execution on FYODOR-L
+### F-04, Hidden PowerShell execution on FYODOR-L
 
-**Source:** `04-fyodor-powershell-empire.jsonl`, records 1–4  
+**Source:** `04-fyodor-powershell-empire.jsonl`, records 1to4  
 **Host:** `FYODOR-L`
 
 Two Sysmon Event ID 1 records show PowerShell executing with hidden-window
@@ -140,16 +140,16 @@ mechanism.
 
 **Next pivots:** retrieve the registry value and decode it as an artefact;
 review Task Scheduler Operational events and task XML; inspect Sysmon Event
-IDs 12–14, 3, 7 and 11; review PowerShell 4103/4104, Prefetch, Amcache and
+IDs 12to14, 3, 7 and 11; review PowerShell 4103/4104, Prefetch, Amcache and
 correlated outbound connections. Preserve the decoded content as evidence
 before analysis.
 
 **Confidence:** high for the observed command line; moderate-to-high for
 malicious intent; persistence and payload behaviour require corroboration.
 
-### F-05 — Azure AD sign-ins for two identities from a shared Hong Kong IP
+### F-05, Azure AD sign-ins for two identities from a shared Hong Kong IP
 
-**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1–20  
+**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1to20  
 **Identities:** `fyodor@froth.ly`, `bgist@froth.ly`  
 **IP:** `104.207.83.63`
 
@@ -172,9 +172,9 @@ token issuance and subsequent cloud audit events.
 **Confidence:** high for the recorded successful sign-ins and IP/location
 fields; moderate for suspicious account use; attribution remains unproven.
 
-### F-06 — Anonymous OneDrive link activity and Exchange mailbox changes
+### F-06, Anonymous OneDrive link activity and Exchange mailbox changes
 
-**Source:** `06-o365-cloud-account-abuse.jsonl`, records 1–16
+**Source:** `06-o365-cloud-account-abuse.jsonl`, records 1to16
 
 The extract shows `bgist@froth.ly` creating an anonymous sharing link for
 `BRUCE BIRTHDAY HAPPY HOUR PICS.lnk`, followed by a `SharingSet` event and
@@ -224,12 +224,12 @@ intrusion timeline.
 
 | Behaviour | Candidate technique | Evidence basis | Confidence |
 |---|---|---|---|
-| Cloud account use | T1078.004 — Valid Accounts: Cloud Accounts | AWS and Azure AD identity activity | Moderate |
-| S3 discovery | T1526 — Cloud Service Discovery | Repeated S3 bucket ACL checks | Moderate |
-| PowerShell execution | T1059.001 — PowerShell | Sysmon process command line | High |
-| Scheduled execution | T1053.005 — Scheduled Task | Task Scheduler service parent; requires task artefact | Moderate |
-| External sharing | T1567 — Exfiltration Over Web Service (hypothesis only) | Anonymous sharing link; no proof of data theft | Low |
-| Account manipulation | T1098 — Account Manipulation (candidate) | Exchange Set-Mailbox changes | Moderate |
+| Cloud account use | T1078.004, Valid Accounts: Cloud Accounts | AWS and Azure AD identity activity | Moderate |
+| S3 discovery | T1526, Cloud Service Discovery | Repeated S3 bucket ACL checks | Moderate |
+| PowerShell execution | T1059.001, PowerShell | Sysmon process command line | High |
+| Scheduled execution | T1053.005, Scheduled Task | Task Scheduler service parent; requires task artefact | Moderate |
+| External sharing | T1567, Exfiltration Over Web Service (hypothesis only) | Anonymous sharing link; no proof of data theft | Low |
+| Account manipulation | T1098, Account Manipulation (candidate) | Exchange Set-Mailbox changes | Moderate |
 
 ATT&CK mappings are hypotheses tied to observed behaviour. Do not promote
 a candidate mapping to confirmed technique without the corresponding
