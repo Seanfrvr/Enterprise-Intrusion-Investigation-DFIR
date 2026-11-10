@@ -3,11 +3,11 @@ name: BOTSv3 fixture pipeline
 on:
   push:
     paths:
-      - "09-BOTSv3-Investigation/**"
+      - "botsv3-investigation/**"
       - ".github/workflows/botsv3-fixture-pipeline.yml"
   pull_request:
     paths:
-      - "09-BOTSv3-Investigation/**"
+      - "botsv3-investigation/**"
       - ".github/workflows/botsv3-fixture-pipeline.yml"
   workflow_dispatch:
 
@@ -25,10 +25,10 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run fixture analysis tests
-        working-directory: 09-BOTSv3-Investigation
+        working-directory: botsv3-investigation
         run: python -m unittest discover -s pipeline -p "test_*.py" -v
       - name: Upload generated analysis
         uses: actions/upload-artifact@v4
         with:
           name: botsv3-fixture-analysis
-          path: 09-BOTSv3-Investigation/output/
+          path: botsv3-investigation/output/

@@ -10,12 +10,12 @@ repeatable analysis with Python.
 ## Investigation
 
 The main case study is in
-[09-BOTSv3-Investigation](09-BOTSv3-Investigation/README.md).
+[botsv3-investigation](botsv3-investigation/README.md).
 
-Start with the [investigation report](09-BOTSv3-Investigation/analysis-report.md)
+Start with the [investigation report](botsv3-investigation/analysis-report.md)
 for the findings, evidence limits and conclusions. The
-[evidence log](09-BOTSv3-Investigation/evidence-log.md) identifies the
-committed records. The [hunt workbook](09-BOTSv3-Investigation/hunt-workbook.md)
+[evidence log](botsv3-investigation/evidence-log.md) identifies the
+committed records. The [hunt workbook](botsv3-investigation/hunt-workbook.md)
 contains Splunk searches for extending the analysis into the full dataset.
 
 ## Analysis pipeline
@@ -24,11 +24,11 @@ The Python pipeline reads the six committed JSONL extracts and generates
 fixture scoped integrity hashes, an event inventory, normalized CSV and a
 UTC timeline.
 
-From the investigation directory:
+From the repository root:
 
 ```bash
-python pipeline/analyze.py
-python -m unittest discover -s pipeline -p "test_*.py" -v
+python botsv3-investigation/pipeline/analyze.py
+python -m unittest discover -s botsv3-investigation/pipeline -p "test_*.py" -v
 ```
 
 The pipeline uses the Python standard library. GitHub Actions runs the same
@@ -60,11 +60,11 @@ The project focuses on:
 
 ## Reproducibility
 
-- [Dataset provenance](09-BOTSv3-Investigation/dataset-provenance.md)
-- [Full archive acquisition](09-BOTSv3-Investigation/full-dataset-acquisition.md)
-- [Evidence log](09-BOTSv3-Investigation/evidence-log.md)
-- [Validation status](09-BOTSv3-Investigation/validation-status.md)
-- [Pipeline source](09-BOTSv3-Investigation/pipeline/analyze.py)
+- [Dataset provenance](botsv3-investigation/dataset-provenance.md)
+- [Full archive acquisition](botsv3-investigation/full-dataset-acquisition.md)
+- [Evidence log](botsv3-investigation/evidence-log.md)
+- [Validation status](botsv3-investigation/validation-status.md)
+- [Pipeline source](botsv3-investigation/pipeline/analyze.py)
 
 The purpose of this repository is to show how conclusions are derived from
 records, where the evidence stops and what an analyst would validate next.
