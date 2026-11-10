@@ -1,4 +1,4 @@
-# BOTSv3 investigation report
+# BOTSv3 cross-platform security investigation
 
 ## Executive summary
 
@@ -6,6 +6,10 @@ This report examines six selected BOTSv3 derived event extracts containing
 83 records across AWS, Windows, DNS, Sysmon, Azure AD and Office 365 telemetry.
 The extracts come from separate scenario folders. They are not a single
 continuous incident dataset and do not establish one attacker or one intrusion.
+
+**Central investigative question:** Do the suspicious activities across
+Frothly's cloud services, endpoints and Microsoft 365 environment indicate
+related security incidents, or are they independent events?
 
 The records support six distinct observations:
 
