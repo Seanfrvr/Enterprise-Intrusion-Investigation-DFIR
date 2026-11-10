@@ -1,48 +1,61 @@
 # BOTSv3 fixture analysis pipeline
 
-## Scope
+## Purpose
 
-This pipeline operates on six small JSONL fixture extracts copied from the public
-`splunk-bots-hunts` project. The upstream project identifies them as BOTSv3
-event slices. Each local fixture has a source GitHub path and immutable source
-blob SHA recorded in `../dataset-provenance.md`.
+This pipeline parses six selected JSONL event extracts attributed to BOTSv3.
+It produces a repeatable fixture inventory, normalized event table, integrity
+manifest and UTC timeline.
 
-These are **not the complete BOTSv3 archive** and are **not a local acquisition
-of the full index**. They are suitable for learning data handling, field
-normalization, event correlation and report generation. Do not use fixture
-record counts as full-dataset statistics.
+It does not download BOTSv3, install Splunk, or query the full index.
+
+## Requirements
+
+Python 3.10 or later. The pipeline uses only the Python standard library.
 
 ## Run
 
-Requires Python 3.10+ and no third-party packages.
+From the repository root:
 
-```bash
+\`\`\`bash
 cd 09-BOTSv3-Investigation
 python pipeline/analyze.py
-```
+python -m unittest discover -s pipeline -p "test_*.py" -v
+\`\`\`
 
-Generated files:
+## Outputs
 
-- `output/fixture-integrity.json` , SHA-256 and byte/record counts for the local fixture files.
-- `output/inventory.json` , fixture-scoped sourcetype counts and identity/IP pivots.
-- `output/normalized-events.csv` , normalized events with original fixture/line references.
-- `output/timeline.json` , records with parseable timestamps, sorted in UTC.
+| File | Purpose |
+|---|---|
+| \`output/fixture-integrity.json\` | SHA-256, byte count and record count for each local fixture |
+| \`output/inventory.json\` | Fixture-scoped event and sourcetype counts |
+| \`output/normalized-events.csv\` | Normalized events with original fixture and line references |
+| \`output/timeline.json\` | Timestamped records sorted in UTC |
 
-Generated output is reproducible and can be deleted/rebuilt. The original JSONL
-fixtures are never modified.
+The output directory is generated during execution and is not a source of
+original evidence. Delete it and rerun the pipeline to reproduce the files.
+
+## Data handling
+
+The AWS CloudTrail fixture has been sanitized after GitHub secret scanning
+identified temporary AWS access key identifiers. The current records contain
+stable redaction labels in place of those values. The source event structure
+and relationships are retained.
+
+The pipeline hashes the exact local fixture bytes. Its SHA-256 values therefore
+describe the sanitized files, not the original upstream Git blobs.
 
 ## Analytical safeguards
 
-- Missing timestamps remain missing; no timestamp is inferred.
-- Raw source fields are retained in the JSONL files.
-- The normalized CSV is a convenience view, not a replacement for raw records.
-- Shared usernames/IPs create pivots for investigation; they do not prove attribution.
-- A narrow fixture cannot support a negative finding about the complete dataset.
-- Every conclusion in the report must identify the source fixture and record line(s).
+1. Missing timestamps remain missing. The pipeline does not infer event time.
+2. Raw JSONL records remain the primary source for this fixture analysis.
+3. The normalized CSV is a convenience view, not a replacement for raw events.
+4. Shared usernames and IP addresses are pivots, not proof of common control.
+5. A selected fixture cannot support a negative finding about the full dataset.
+6. Every report finding must identify the fixture and record range that supports it.
 
-## Next stage: full dataset validation
+## Full dataset validation
 
-When Splunk and the complete BOTSv3 dataset are available, validate the same
-hypotheses against `index=botsv3`, inspect raw events before relying on extracted
-fields, and export the actual search results. Keep the fixture pipeline output
-separate from full-index results.
+When the complete BOTSv3 archive and Splunk are available, validate the same
+hypotheses against \`index=botsv3\`. Inspect raw events before relying on field
+extractions. Preserve the exact SPL, time range, search job ID and exported
+results for each hunt. Keep full-index results separate from fixture outputs.
