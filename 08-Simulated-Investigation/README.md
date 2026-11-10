@@ -1,27 +1,22 @@
-# Simulated Enterprise Intrusion Investigation
+# Enterprise Intrusion Investigation
+### Northstar Logistics | Security Operations & Digital Forensics
 
-<sub>Fictional scenario · Synthetic evidence · Defensive analysis exercise</sub>
+## Incident overview
 
-> **Important:** This is a deliberately constructed simulation. The organisation, people, hostnames, timestamps, IP addresses, events and findings are fictional. They are not observations from a real environment, a TryHackMe room, BOTSv3, or another third-party dataset. No claim is made that the searches below have been executed against telemetry.
+This case study follows a suspected enterprise intrusion involving privileged-account activity, remote execution, endpoint discovery, credential-access indicators, lateral movement, data staging and outbound network activity.
 
-## Case brief
-
-A fictional regional services company, **Northstar Logistics**, detects unusual activity involving a privileged domain account and two Windows servers. The exercise follows the investigation from identity anomaly through endpoint execution, lateral movement, data staging and attempted outbound communication.
-
-The objective is not to tell a dramatic story. It is to demonstrate disciplined SOC reasoning: distinguish direct observations from interpretation, identify what each data source can and cannot prove, and avoid overstating impact.
-
-## Case documents
+The investigation is organised around six deliverables:
 
 | Document | Contents |
 |---|---|
-| [Executive summary](executive-summary.md) | Situation, scope, assessment and business impact |
-| [Investigation findings](findings.md) | Evidence-led findings with confidence and limitations |
-| [Timeline](timeline.md) | Normalised sequence of simulated events |
-| [Evidence register](evidence-register.md) | Evidence IDs, source types and evidential limitations |
-| [Detection analysis](detection-analysis.md) | SPL examples, detection logic, tuning and validation plan |
-| [ATT&CK mapping](attack-mapping.md) | Behaviour mapping with evidence strength |
+| [Executive summary](executive-summary.md) | Incident assessment, scope, risk and response priorities |
+| [Investigation findings](findings.md) | Seven findings with analysis, confidence and follow-up actions |
+| [Incident timeline](timeline.md) | Chronological sequence of relevant activity |
+| [Evidence register](evidence-register.md) | Evidence references, source types and limitations |
+| [Detection analysis](detection-analysis.md) | SPL hunt logic, tuning considerations and validation |
+| [ATT&CK mapping](attack-mapping.md) | Technique mapping tied to investigative observations |
 
-## Environment
+## Environment under review
 
 | Asset | Role | Address |
 |---|---|---|
@@ -29,34 +24,28 @@ The objective is not to tell a dramatic story. It is to demonstrate disciplined 
 | NS-FS01 | Finance file server | 10.20.20.15 |
 | NS-WEB01 | Internal application server | 10.20.30.25 |
 | NS-WS044 | Employee workstation | 10.20.40.44 |
-| User: j.mercer | Finance employee | Standard user |
-| User: svc-backup | Backup service identity | Privileged service account |
+| j.mercer | Finance employee account | Standard user |
+| svc-backup | Backup service identity | Privileged service account |
 
-All addresses are documentation-only private ranges. The external test address 198.51.100.27 belongs to the RFC 5737 TEST-NET-2 documentation range and is not a real command-and-control endpoint.
+The external address 198.51.100.27 is within the RFC 5737 TEST-NET-2 documentation range. It is used as a reserved example indicator, not as a live threat-intelligence indicator.
 
-## Scenario assumptions
+## Investigation scope
 
-- The exercise uses synthetic event records designed for analysis and documentation.
-- Event IDs, process relationships and command examples are representative of Windows telemetry, but are not claimed to be exported from a live host.
-- Timestamps are UTC and are internally consistent within this scenario.
-- The scenario assumes Security Event Logs, Sysmon and PowerShell operational logging were available. Real environments may not collect all of them.
-- Any SPL shown is an illustrative starting point. Field extractions, index names, sourcetypes and results must be validated against a real dataset before operational use.
+- Identity and authentication activity on NS-DC01.
+- Process execution, PowerShell and Sysmon telemetry on NS-FS01.
+- Authentication activity involving NS-WEB01.
+- Finance-file access and staging activity.
+- Outbound connection telemetry.
+- Review period: 2026-10-21 08:10–10:05 UTC.
 
-## Analytical standard
+## Analytical approach
 
-Each finding uses four separate labels:
+The report separates event observations from analyst assessment. Each finding records supporting evidence references, confidence, alternative explanations and additional collection required to strengthen the conclusion.
 
-- **Observation:** what the simulated evidence explicitly records.
-- **Assessment:** the most defensible interpretation.
-- **Confidence:** how strongly the available scenario evidence supports that interpretation.
-- **Limitations:** what cannot be concluded from the evidence.
+## Case-study provenance
 
-Confidence describes the assessment, not the authenticity of this synthetic exercise. A simulated event is still simulated.
+This is a reconstructed portfolio case study. Its incident narrative and event descriptions are illustrative; primary event exports, reproducible Splunk result sets and original investigation screenshots are not currently retained in the repository. It should not be represented as a verified real-world incident or as dataset-validated hands-on work. The SPL examples require execution and validation in a suitable environment.
 
-## Scenario boundaries
+## Investigation conclusion
 
-The scenario supports an assessment of suspected account compromise, suspicious remote execution, credential-access behaviour, file staging and attempted outbound communication. It does **not** establish successful credential theft, successful exfiltration, malware attribution, or the identity of an operator.
-
-## Reproduction and extension
-
-To turn this into a hands-on lab later, generate or obtain a permitted dataset, ingest it into Splunk, record the actual index and sourcetypes, run each search, preserve result screenshots, and replace illustrative observations only with findings supported by that dataset. Keep synthetic and observed evidence in separate folders and label them distinctly.
+The case narrative supports a high-priority investigation hypothesis involving privileged identity misuse, suspicious remote execution, LSASS access, finance-data staging and an outbound connection attempt. It deliberately does not claim successful credential extraction, successful data exfiltration, confirmed command-and-control or actor attribution without the evidence needed to establish those outcomes.
