@@ -7,10 +7,10 @@ This plan defines what must be collected and tested before the case narrative ca
 
 | Priority | Source | Collection target | Why it matters |
 |---|---|---|---|
-| Critical | NS-DC01 Security log | Events 4768, 4769, 4776, 4720–4738 where relevant | Validate authentication context, service-ticket activity and account changes |
+| Critical | NS-DC01 Security log | Events 4768, 4769, 4776, 4720to4738 where relevant | Validate authentication context, service-ticket activity and account changes |
 | Critical | NS-FS01 Security log | Events 4624, 4672, 4688, 4663 if auditing is enabled | Establish destination logons, privilege context, process creation and audited file access |
-| Critical | NS-FS01 Sysmon | Events 1, 3, 10, 11, 12–14 if configured | Reconstruct process ancestry, network activity, LSASS access and file creation |
-| High | NS-FS01 WMI-Activity Operational | Available WMI operational records around 08:20–08:35 UTC | Identify WMI client, user, operation and client process context |
+| Critical | NS-FS01 Sysmon | Events 1, 3, 10, 11, 12to14 if configured | Reconstruct process ancestry, network activity, LSASS access and file creation |
+| High | NS-FS01 WMI-Activity Operational | Available WMI operational records around 08:20to08:35 UTC | Identify WMI client, user, operation and client process context |
 | High | NS-FS01 PowerShell Operational | Events 4103 and 4104, including all fragments | Reconstruct script content and execution context |
 | High | NS-WEB01 Security log | Events 4624, 4672, 4688 and relevant service logs | Validate the inter-host logon and determine what service was accessed |
 | High | File server / object access | File audit records, SMB server logs, USN journal and relevant file metadata | Establish what was accessed, by whom and whether copies match source files |
