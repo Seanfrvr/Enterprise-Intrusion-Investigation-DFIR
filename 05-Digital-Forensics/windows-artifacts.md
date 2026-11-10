@@ -28,7 +28,7 @@ Commonly useful event types include:
 - **7:** Image loaded, if configured.
 - **10:** Process access.
 - **11:** File creation.
-- **12–14:** Registry object events.
+- **12to14:** Registry object events.
 - **22:** DNS query.
 
 Sysmon coverage depends on the deployed configuration. Absence of an event is not proof that the activity did not occur.
