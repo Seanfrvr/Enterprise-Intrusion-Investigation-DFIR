@@ -9,9 +9,9 @@ The mappings below are candidates based on the behaviours described in the case 
 | WMI provider process lineage to command interpreters | Windows Management Instrumentation | T1047 | E-003, E-004 | Candidate; process lineage supports WMI-associated execution. Remote origin and malicious intent require corroboration |
 | PowerShell discovery commands | Command and Scripting Interpreter: PowerShell | T1059.001 | E-005 | Supported as PowerShell execution if script-block records validate; intent remains contextual |
 | Unusual process access to LSASS | OS Credential Dumping: LSASS Memory | T1003.001 | E-006 | Investigative candidate only; process access does not establish a memory dump or recovered credentials |
-| Inter-host network logon | No sub-technique assigned | — | E-007 | Remote service is unknown. Establish SMB, RDP, WinRM or another protocol before mapping |
-| Finance-file access and local staging | No technique assigned yet | — | E-008, E-009 | Collection mechanism and source location require validation before selecting T1005 or T1039 |
-| Outbound TCP activity | No technique assigned | — | E-010 | Protocol, process, payload and session outcome are insufficient for a C2 or exfiltration mapping |
+| Inter-host network logon | No sub-technique assigned |, | E-007 | Remote service is unknown. Establish SMB, RDP, WinRM or another protocol before mapping |
+| Finance-file access and local staging | No technique assigned yet |, | E-008, E-009 | Collection mechanism and source location require validation before selecting T1005 or T1039 |
+| Outbound TCP activity | No technique assigned |, | E-010 | Protocol, process, payload and session outcome are insufficient for a C2 or exfiltration mapping |
 
 ## Mapping rationale
 
