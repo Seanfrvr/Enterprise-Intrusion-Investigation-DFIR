@@ -23,8 +23,12 @@ class PipelineTests(unittest.TestCase):
     def test_inventory_is_fixture_scoped(self):
         data = json.loads((OUTPUT / "inventory.json").read_text(encoding="utf-8"))
         self.assertEqual(data["total_fixture_events"], 83)
+        self.assertEqual(data["timestamped_event_count"], 36)
+        self.assertEqual(data["untimestamped_event_count"], 47)
+        self.assertEqual(data["timestamped_event_count"] + data["untimestamped_event_count"], 83)
         self.assertEqual(len(data["by_fixture"]), 6)
         self.assertEqual(sum(data["by_fixture"].values()), 83)
+        self.assertEqual(sum(data["by_sourcetype"].values()), 83)
         self.assertIn("not full index inventory", data["scope"])
 
     def test_source_families_present(self):
@@ -44,6 +48,14 @@ class PipelineTests(unittest.TestCase):
         times = [row["timestamp_utc"] for row in data["events"]]
         self.assertEqual(times, sorted(times))
         self.assertEqual(data["timezone"], "UTC")
+
+    def test_normalized_and_timeline_outputs_preserve_scope_and_traceability(self):
+        rows = (OUTPUT / "normalized-events.csv").read_text(encoding="utf-8").splitlines()
+        timeline = json.loads((OUTPUT / "timeline.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(rows) - 1, 83)
+        self.assertEqual(len(timeline["events"]), 36)
+        self.assertTrue(all(row["fixture"] and int(row["fixture_line"]) > 0
+                            for row in timeline["events"]))
 
     def test_integrity_hashes_are_sha256(self):
         data = json.loads((OUTPUT / "fixture-integrity.json").read_text(encoding="utf-8"))
