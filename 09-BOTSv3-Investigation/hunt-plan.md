@@ -32,7 +32,7 @@ Potential pivots:
 - Identity ARN or principal ID.
 - Source IP and user agent.
 - Event name and service.
-- Access key ID, where present and appropriate to retain.
+- Credential session context, where available and appropriate to retain.
 - Related activity in CloudWatch, GuardDuty, VPC flow or S3 access logs.
 
 ### Hunt B: Microsoft identity activity
