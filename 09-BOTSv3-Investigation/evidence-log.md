@@ -30,7 +30,7 @@ fixture filename and line number to locate a specific JSONL record.
 
 | Hunt ID | Executed (UTC) | Exact time range | Search job ID | Result count | Status |
 |---|---|---|---|---:|---|
-| H-001 onward | — | — | — | — | Not executed against full index |
+| H-001 onward | , | , | , | , | Not executed against full index |
 
 Do not populate this table until searches have actually been run in Splunk.
 For each run, preserve the exact SPL, absolute time range, search job ID,
@@ -40,10 +40,10 @@ returned count, field validation notes and exported result filename.
 
 Running `python pipeline/analyze.py` generates:
 
-- `output/fixture-integrity.json` — local byte counts and SHA-256 hashes.
-- `output/inventory.json` — fixture-scoped record and sourcetype counts.
-- `output/normalized-events.csv` — normalized view with fixture/line references.
-- `output/timeline.json` — timestamped records sorted in UTC.
+- `output/fixture-integrity.json` , local byte counts and SHA-256 hashes.
+- `output/inventory.json` , fixture-scoped record and sourcetype counts.
+- `output/normalized-events.csv` , normalized view with fixture/line references.
+- `output/timeline.json` , timestamped records sorted in UTC.
 
 These are derived analysis artefacts. The original JSONL records remain the
 source of truth.
