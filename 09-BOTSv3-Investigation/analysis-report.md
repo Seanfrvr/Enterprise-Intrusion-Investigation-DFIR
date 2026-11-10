@@ -227,7 +227,7 @@ intrusion timeline.
 | Behaviour | Candidate technique | Evidence basis | Confidence |
 |---|---|---|---|
 | Cloud account use | T1078.004, Valid Accounts: Cloud Accounts | AWS and Azure AD identity activity | Moderate |
-| S3 discovery | T1526, Cloud Service Discovery | Repeated S3 bucket ACL checks | Moderate |
+| S3 bucket ACL inspection | No direct technique assigned | Repeated `GetBucketAcl` calls; the selected records do not show `ListBuckets` or `ListObjectsV2` | Not mapped |
 | PowerShell execution | T1059.001, PowerShell | Sysmon process command line | High |
 | Scheduled execution | T1053.005, Scheduled Task | Task Scheduler service parent; requires task artefact | Moderate |
 | External sharing | T1567, Exfiltration Over Web Service (hypothesis only) | Anonymous sharing link; no proof of data theft | Low |
@@ -236,6 +236,8 @@ intrusion timeline.
 ATT&CK mappings are hypotheses tied to observed behaviour. Do not promote
 a candidate mapping to confirmed technique without the corresponding
 behavioural evidence.
+The AWS activity is described as bucket ACL inspection rather than confirmed cloud service or object discovery. MITRE ATT&CK T1619 describes cloud storage object enumeration, with `ListObjectsV2` as an AWS example. T1526 concerns enumeration of cloud services. The observed `GetBucketAcl` calls do not, by themselves, establish either behaviour. See [T1619](https://attack.mitre.org/techniques/T1619/) and [T1526](https://attack.mitre.org/techniques/T1526/).
+
 
 ## Detection opportunities
 
