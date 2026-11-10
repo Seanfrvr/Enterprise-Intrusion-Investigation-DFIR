@@ -1,16 +1,13 @@
-# Detection Analysis
+# Detection Engineering Analysis
+### Northstar Logistics | Splunk SPL Hunt Logic
 
-<sub>Illustrative Splunk SPL · Synthetic scenario · Not executed or validated</sub>
+The following searches translate the investigation's key behaviours into practical hunt logic. They are starting-point SPL examples, not validated production detections. Confirm index names, sourcetypes, field extractions, CIM mapping and event coverage in the target Splunk environment.
 
-This document translates the simulated findings into detection opportunities. The searches are starting points, not production-ready detections. Confirm the actual index, sourcetype, field names, CIM mapping, data coverage and time range before use.
-
-## Detection 1 — Privileged service account used from an unusual source
+## DET-01 — Service-account logon from an unexpected source
 
 **Objective:** identify successful network logons for service identities from hosts outside an approved source list.
 
-**Relevant telemetry:** Windows Security Event ID 4624; fields commonly include `TargetUserName`, `IpAddress`, `LogonType`, `ComputerName`.
-
-Illustrative SPL:
+**Telemetry:** Windows Security Event ID 4624. Common fields include `TargetUserName`, `IpAddress`, `LogonType` and `ComputerName`.
 
 ```spl
 index=windows sourcetype="WinEventLog:Security" EventCode=4624
@@ -22,17 +19,15 @@ TargetUserName="svc-backup" Logon_Type=3
 | convert ctime(first_seen) ctime(last_seen)
 ```
 
-**Tuning:** use an approved service-account inventory and known source-host list. Exclude only documented, reviewed service patterns. Alert on new source hosts, unexpected logon types or unusual time windows.
+**Analyst review:** compare source host, logon type, authentication package and time of access against the service-account baseline. Validate approved backup operations before escalation.
 
-**Validation:** test known-good backup activity and a controlled logon from a non-approved host. Confirm both alert behaviour and expected exclusions.
+**Tuning:** maintain an approved account-to-host mapping. Alert on new source hosts and unexpected logon types rather than suppressing all service-account activity.
 
-## Detection 2 — WMI-associated remote process execution
+## DET-02 — WMI spawning command interpreters
 
-**Objective:** identify WMI provider processes spawning command interpreters or scripting engines.
+**Objective:** identify WMI provider processes spawning command shells or scripting engines.
 
-**Relevant telemetry:** Sysmon Event ID 1 or Windows Security Event ID 4688 with process-creation auditing.
-
-Illustrative SPL:
+**Telemetry:** Sysmon Event ID 1 or Security Event ID 4688 where process creation auditing is enabled.
 
 ```spl
 index=sysmon EventCode=1
@@ -42,17 +37,15 @@ ParentImage="*\\WmiPrvSE.exe"
 | sort 0 _time
 ```
 
-**Tuning:** WMI is widely used by legitimate management products. Baseline approved management servers, administrators, software deployment tools and recurring commands. Do not suppress all WMI activity.
+**Analyst review:** inspect parent and child command lines, user context, process signer, hash, source host and related network activity.
 
-**Validation:** generate a benign WMI process-creation test in an isolated lab and verify that the expected parent/child relationship is collected.
+**Tuning:** baseline approved management platforms, deployment systems and administrative scripts. WMI is a legitimate Windows management interface; parent process alone is not sufficient for a malicious verdict.
 
-## Detection 3 — Suspicious LSASS process access
+## DET-03 — Unusual access to LSASS
 
 **Objective:** surface processes accessing LSASS outside expected security-product behaviour.
 
-**Relevant telemetry:** Sysmon Event ID 10. Field names vary by Sysmon version and extraction.
-
-Illustrative SPL:
+**Telemetry:** Sysmon Event ID 10. Field names and access-mask representation vary by configuration.
 
 ```spl
 index=sysmon EventCode=10 TargetImage="*\\lsass.exe"
@@ -63,39 +56,36 @@ index=sysmon EventCode=10 TargetImage="*\\lsass.exe"
 | sort - count
 ```
 
-**Tuning:** establish a baseline of approved EDR, antivirus and Windows components. Review process signer, hash, path, user context and granted access rights. Avoid a simplistic rule that treats every LSASS handle request as malicious.
+**Analyst review:** inspect source process path, signer, hash, user, command line and granted access rights. Correlate with EDR alerts and subsequent authentication activity.
 
-**Validation:** use a safe, controlled test procedure in a disposable lab. Confirm that telemetry is generated and that approved security software does not create unmanageable noise.
+**Tuning:** establish a baseline for approved endpoint-security components. Do not alert on every LSASS handle request without context.
 
-## Detection 4 — PowerShell discovery and suspicious execution
+## DET-04 — PowerShell discovery patterns
 
-**Objective:** correlate PowerShell process creation with script-block content that performs discovery or uses suspicious execution patterns.
+**Objective:** identify PowerShell process or script-block activity containing discovery-related commands or suspicious execution patterns.
 
-**Relevant telemetry:** Sysmon Event ID 1, PowerShell Operational Event ID 4104, and optionally 4103.
+**Telemetry:** Sysmon Event ID 1 and PowerShell Operational Event ID 4104. These sources may require separate searches and correlation because their schemas differ.
 
-Illustrative SPL:
+Illustrative script-block search:
 
 ```spl
-(index=sysmon EventCode=1 Image="*\\powershell.exe")
-OR (index=windows EventCode=4104)
-| eval process_context=coalesce(CommandLine, ScriptBlockText)
-| where match(process_context,
+index=windows EventCode=4104
+| eval script_text=coalesce(ScriptBlockText, Message)
+| where match(script_text,
   "(?i)(Get-ADUser|Get-ADComputer|Get-Service|Get-LocalGroupMember|FromBase64String|DownloadString)")
-| table _time host User Image process_context
+| table _time host User script_text
 | sort 0 _time
 ```
 
-**Tuning:** this is a keyword hunt, not a reliable maliciousness classifier. Validate field availability and multiline script-block handling. Use user, parent process, signer, host role and prevalence to prioritise results.
+**Analyst review:** retrieve the complete script block, correlate with process creation and identify the account, parent process, host role and execution frequency.
 
-**Validation:** test benign administrative scripts and controlled suspicious command patterns. Measure false positives and ensure script-block logging is enabled where policy permits.
+**Tuning:** keyword matches are leads for investigation, not a maliciousness verdict. Validate benign administration scripts and multiline event handling.
 
-## Detection 5 — File staging followed by outbound connection
+## DET-05 — File staging in an unusual directory
 
-**Objective:** identify unusual file creation in staging locations followed by outbound connections from the same host.
+**Objective:** identify file creation in a monitored staging path.
 
-**Relevant telemetry:** Sysmon Event ID 11, endpoint file telemetry, firewall, proxy or network connection logs.
-
-Illustrative SPL for staging file creation:
+**Telemetry:** Sysmon Event ID 11 or endpoint file telemetry.
 
 ```spl
 index=sysmon EventCode=11
@@ -106,31 +96,43 @@ TargetFilename="*\\ProgramData\\Cache\\*"
 | convert ctime(first_seen) ctime(last_seen)
 ```
 
-Illustrative SPL for outbound connections:
+**Analyst review:** identify the creating process, file size, hash, source location and subsequent access. Correlate with archive utilities, removable-media events and outbound network records.
+
+## DET-06 — Outbound connection review
+
+**Objective:** identify outbound connections initiated by monitored endpoints and prioritise unusual destinations or processes.
+
+**Telemetry:** Sysmon Event ID 3, firewall or proxy logs.
 
 ```spl
-index=sysmon EventCode=3
-Initiated=true
+index=sysmon EventCode=3 Initiated=true
 | stats count values(DestinationIp) as destinations
   values(DestinationPort) as ports
   by Computer Image
 | sort - count
 ```
 
-**Correlation requirement:** correlate on host and time window, then investigate the responsible process and transfer outcome. A file created in a staging directory and an outbound connection on the same host do not, by themselves, prove the file was transmitted.
+**Analyst review:** inspect connection state, destination reputation, DNS resolution, process attribution, bytes sent/received and proxy/firewall disposition. A connection attempt is not proof of a completed session or data transfer.
 
-## Validation checklist
+## Correlation approach
 
-- [ ] Confirm index, sourcetype and field extraction.
-- [ ] Confirm source event IDs and logging coverage.
-- [ ] Run against a defined, documented time range.
-- [ ] Review raw events behind every aggregate.
-- [ ] Test known-good administrative behaviour.
-- [ ] Test a safe, controlled suspicious behaviour.
+For a real investigation, correlate the identity, process, file and network searches using host, user, process GUID, logon ID and bounded time windows. Do not join solely on approximate timestamps where stronger identifiers are available.
+
+The combination of file staging and outbound network activity on one host is a useful investigative lead. It does not prove that the staged files were transmitted.
+
+## Validation plan
+
+- [ ] Confirm index and sourcetype for each telemetry source.
+- [ ] Verify field names against raw events.
+- [ ] Confirm event collection and retention coverage.
+- [ ] Run each search over a documented time range.
+- [ ] Review raw events behind aggregated results.
+- [ ] Test known-good administrative activity.
+- [ ] Test controlled suspicious activity in an isolated lab.
 - [ ] Record false positives, missed events and tuning decisions.
-- [ ] Capture the exact SPL version and result screenshots.
-- [ ] Mark the detection as tested only after evidence is retained.
+- [ ] Preserve query text, screenshots and sample event references.
+- [ ] Mark detections as validated only after repeatable testing.
 
-## Operational limitations
+## Current validation status
 
-These examples do not include risk scoring, suppression windows, notable-event creation, CIM data-model acceleration or response automation. Add those only after confirming the telemetry and validating the core logic. Never deploy a search as a blocking or automated response rule solely because it appears plausible in a document.
+The searches in this document are proposed hunt logic. They have not been executed against the case telemetry or validated in a Splunk environment as part of this repository. Field names and event availability must be checked before operational use.
