@@ -4,7 +4,7 @@
 
 A review of six selected BOTSv3-derived event extracts identified several
 security-relevant activity clusters across cloud identity, endpoint and network
-telemetry. The extracts contain 83 records across six source families. The
+telemetry. The selected extracts contain 83 records across six source families. The
 strongest observations are:
 
 1. AWS CloudTrail records attribute successful console sign-ins without MFA
