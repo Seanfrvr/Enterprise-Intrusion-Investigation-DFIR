@@ -27,9 +27,8 @@ They contain 83 records across:
 - Azure AD sign-ins
 - Office 365 management activity
 
-The records were copied without modification from the public fixture files
-listed in [dataset provenance](dataset-provenance.md). The upstream Git blob
-SHA is recorded for each source. These are selected event slices, not the
+The records are derived from the public fixture files. The AWS fixture has been sanitized to replace temporary credential identifiers. See
+[dataset provenance](dataset-provenance.md) for the original upstream source paths and blob SHAs. These are selected event slices, not the
 complete BOTSv3 archive or a complete export of `index=botsv3`.
 
 ## Investigation thread
