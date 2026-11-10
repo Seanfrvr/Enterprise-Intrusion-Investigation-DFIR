@@ -1,44 +1,61 @@
 # Executive Summary
-### Northstar Logistics | Reconstructed Case Exercise
+### Northstar Logistics | Enterprise Intrusion Investigation
 
-## Assessment
+## Incident overview
 
-The scenario describes a sequence of events involving the privileged service identity `svc-backup`: authentication from an unexpected workstation, WMI-associated process execution on a file server, PowerShell discovery, unusual access to LSASS, inter-host authentication, finance-file staging and outbound network activity.
+A sequence of identity, endpoint and network events raises concern that the privileged service identity `svc-backup` was used outside its documented operating pattern to access multiple systems.
 
-Taken together, these behaviours warrant high-priority investigation **within the scenario**. They do not establish a confirmed compromise or prove that credentials were extracted or data left the environment.
+The case narrative begins with authentication activity associated with NS-WS044 and `svc-backup`, followed by a privileged logon session on NS-FS01. Subsequent endpoint records describe WMI-associated process creation, PowerShell host and domain discovery, and access to LSASS by an executable running from a temporary directory. Later records describe network authentication involving NS-WEB01, finance-file access and local staging on NS-FS01, followed by outbound network activity.
 
-## Main findings in the scenario
+## Overall assessment
 
-1. **Identity:** `svc-backup` is described as authenticating from NS-WS044, outside its stated service-account baseline.
-2. **Execution:** NS-FS01 is described as recording `WmiPrvSE.exe` spawning command and PowerShell processes. The remote client is not established.
-3. **Discovery:** PowerShell records are described as containing host, domain and service enumeration.
-4. **Credential access:** an executable from a temporary path is described as accessing LSASS. Credential extraction is not established.
-5. **Inter-host access:** NS-WEB01 is described as recording a network logon from NS-FS01. The remote service is unknown.
-6. **File activity:** finance documents are described as accessed and copied to a local staging path. External transfer is not established.
-7. **Network:** outbound TCP activity is described to `198.51.100.27:8443`. This is a documentation-only address; connection success and payload are unavailable.
+The sequence is consistent with possible privileged-account misuse and suspicious activity across multiple hosts. The combination of an anomalous service-account source, remote-management execution indicators, unusual LSASS access and finance-data staging warrants high-priority triage.
 
-## Provisional risk
+The evidence described in this case does not establish the initial credential-compromise mechanism, successful credential extraction, the remote service used for inter-host access, successful external communication or data exfiltration.
 
-**Working severity: High, pending validation.** The scenario combines a privileged identity, multiple hosts, LSASS access and finance-data staging. This is a prioritisation judgement, not a confirmed impact rating.
+## Principal findings
 
-- Confidentiality: potentially high; external disclosure is unproven.
-- Integrity: unknown; no verified unauthorised modification is described.
-- Availability: no confirmed disruption.
-- Scope: several hosts appear in the scenario; wider scope is unknown.
+1. **Identity:** `svc-backup` is associated with authentication from NS-WS044, outside the stated service-account baseline.
+2. **Execution:** NS-FS01 records a process chain involving `WmiPrvSE.exe`, `cmd.exe` and PowerShell. Remote origin requires corroboration from WMI and network telemetry.
+3. **Discovery:** PowerShell script-block records describe host, domain and service enumeration.
+4. **Credential-access indicator:** an unusual executable from a temporary path accesses LSASS. Its signer and whether credential material was extracted are not established.
+5. **Inter-host authentication:** `svc-backup` is associated with a network logon on NS-WEB01 from NS-FS01. The remote protocol is not established.
+6. **Data handling:** finance documents are accessed and copies are created in a local staging directory. External transfer is not established.
+7. **Network:** outbound activity from NS-FS01 is recorded to 198.51.100.27:8443. Session disposition and payload are unavailable.
 
-## Priority investigation steps
+## Scope and coverage
 
-1. Validate the service-account owner, approved source hosts and scheduled backup activity.
-2. Correlate the destination host's Event ID 4624 with domain-controller authentication context.
-3. Reconstruct process ancestry and identify the WMI client using WMI-Activity and network telemetry.
-4. Preserve and examine the executable associated with LSASS access; review EDR and file artefacts.
-5. Identify the remote service used for inter-host access.
-6. Determine which finance files were accessed, what process staged them and whether hashes match source files.
-7. Establish the outbound connection disposition, process, DNS context and bytes transferred.
-8. Expand the review to persistence, other privileged identities and additional hosts.
+The review period is 2026-10-21 08:10–10:05 UTC. The described scope includes NS-WS044, NS-DC01, NS-FS01 and NS-WEB01, with identity, process, PowerShell, file and network activity.
 
-## Provenance and confidence
+The case does not include packet capture, cloud audit records, email telemetry, endpoint memory acquisition, complete forensic disk images or comprehensive domain-wide event coverage. These gaps prevent a reliable determination of initial access, persistence, full compromise scope and data-loss impact.
 
-This is a reconstructed portfolio exercise. Its narrative and timestamps are illustrative. No primary event exports, original screenshots, reproducible Splunk result sets or hashes are retained, and the searches have not been validated against a dataset in this project.
+## Provisional severity and business risk
 
-The scenario does not establish initial access, credential theft, persistence, successful command-and-control, exfiltration or actor attribution. The findings must be rewritten if later source evidence differs from the scenario.
+**Provisional severity: High — pending validation.**
+
+The proposed severity is based on the combination of a privileged service identity, activity across multiple systems, suspicious LSASS access and access to finance data. It is not a confirmed impact rating.
+
+- **Confidentiality:** potentially high if finance data was accessed and transferred without authorisation; transfer is not established.
+- **Integrity:** undetermined; no verified unauthorised modification is described.
+- **Availability:** no confirmed disruption is described.
+- **Scope:** multiple systems are implicated in the case narrative; enterprise-wide scope is unknown.
+
+The severity should be reassessed after validating the source events, account legitimacy, affected assets and network-transfer outcome.
+
+## Priority response actions
+
+1. Preserve Security, Sysmon, PowerShell, WMI-Activity, file-server, firewall and proxy records before retention windows expire.
+2. Validate the service-account activity with system owners; identify approved source hosts and service dependencies before disabling or rotating the account.
+3. Investigate NS-FS01 and the process that accessed LSASS, preserving the executable, metadata, hash and relevant endpoint telemetry.
+4. Correlate the destination server's logon record with domain-controller authentication records using account, source address, service information and logon identifiers where available.
+5. Identify the remote protocol and process responsible for inter-host access.
+6. Determine which finance files were accessed and staged; compare source and destination hashes and investigate archive or transfer activity.
+7. Establish the outbound connection disposition, process attribution, DNS context and bytes transferred using endpoint, firewall, proxy and packet telemetry.
+8. Expand the hunt to scheduled tasks, services, privileged group changes, remote-management configuration and other persistence mechanisms.
+9. Reassess scope and severity before recovery and credential restoration.
+
+## Confidence and reporting limitations
+
+This is a reconstructed portfolio case study. Primary event exports, reproducible Splunk results and original investigation screenshots are not currently retained. The event descriptions and timestamps are illustrative case material, not independently verified observations. The searches are proposed analysis logic and have not been validated against a dataset in this project.
+
+The report deliberately distinguishes suspicious behaviour from confirmed outcomes. Credential theft, persistence, successful command-and-control, exfiltration and actor attribution remain unconfirmed.
