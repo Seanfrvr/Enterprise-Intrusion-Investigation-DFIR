@@ -1,40 +1,36 @@
 # Credential Access
 
-## Investigation question
+## Objective
 
-Was authentication material accessed, acquired or subsequently used? Treat these as separate claims.
+Investigate activity that may expose passwords, hashes, tickets, tokens or other authentication material.
 
-## LSASS investigation
+## Telemetry and artefacts
 
-For Sysmon Event ID 10 or an EDR process-access alert, capture:
+- Process creation and command-line telemetry.
+- EDR alerts for suspicious access to LSASS.
+- Memory-dump file creation and access.
+- Windows Security authentication events.
+- PowerShell and command-shell activity.
+- Registry access involving remote-access or credential-management software.
+- Active Directory database access and backup activity.
+- Identity-provider sign-in and token events.
 
-- Source process path, PID and ProcessGuid.
-- Target process (confirm it is LSASS).
-- Granted access mask and call trace, where available.
-- User, integrity level and parent process.
-- File signature, SHA-256 and file creation metadata.
-- Related dump-file creation or EDR findings.
+## Analysis method
 
-Then check whether the source process is an approved security or diagnostic tool. Compare its signer, path, hash and prevalence with known-good endpoint software.
+1. Identify the process associated with credential-access behaviour.
+2. Review process ancestry, account, integrity level and host role.
+3. Correlate process access to LSASS with dump-file creation or suspicious utility execution.
+4. Determine whether directory database files were accessed, copied or staged.
+5. Review subsequent authentication activity for possible use of exposed material.
+6. Separate attempted access from confirmed acquisition and confirmed credential reuse.
 
-**Important:** process access to LSASS is not proof that credentials were dumped. A dump file is not proof that usable secrets were recovered.
+## Important distinctions
 
-## Other credential sources
+- Access to LSASS is not proof that credentials were recovered.
+- Creation of a memory dump is not proof that it contained usable secrets.
+- Access to an Active Directory database is not proof that the database was successfully extracted.
+- A suspicious tool name alone is not proof of malicious activity.
 
-Depending on the suspected technique, review:
+## Response priorities
 
-- Authentication events for unusual account use after the suspected access.
-- PowerShell and process telemetry for credential-related commands.
-- Access to directory database or registry files.
-- Browser, password-manager or application credential stores, where authorised.
-- Identity-provider session, token and MFA events.
-
-## Build the evidence chain
-
-1. Identify the process or action that may have accessed credentials.
-2. Establish whether credential material was actually acquired.
-3. Identify which accounts or secrets could have been exposed.
-4. Look for later authentication that could indicate reuse.
-5. Record what remains unknown.
-
-Do not recommend indiscriminate password resets before identifying affected identities and coordinating the order with system owners. Preserve evidence and revoke sessions or rotate secrets proportionately to the confirmed exposure.
+If credential exposure is credible, preserve evidence, identify affected accounts and systems, revoke sessions where appropriate, rotate exposed secrets in a controlled sequence, review privileged accounts and investigate whether authentication material was subsequently used. Coordinate with identity and directory-service owners to avoid disrupting recovery.
