@@ -1,138 +1,161 @@
 # Detection Engineering Analysis
 ### Northstar Logistics | Splunk SPL Hunt Logic
 
-The following searches translate the investigation's key behaviours into practical hunt logic. They are starting-point SPL examples, not validated production detections. Confirm index names, sourcetypes, field extractions, CIM mapping and event coverage in the target Splunk environment.
+These searches translate the case's investigative questions into practical hunt logic. They are starting points, not validated detections. The examples assume common Windows XML and Sysmon field extractions; confirm actual field names, index, sourcetype, event coverage and time range before use.
 
 ## DET-01 — Service-account logon from an unexpected source
 
-**Objective:** identify successful network logons for service identities from hosts outside an approved source list.
+**Objective:** identify successful network logons for a privileged service identity and expose source hosts for baseline comparison.
 
-**Telemetry:** Windows Security Event ID 4624. Common fields include `TargetUserName`, `IpAddress`, `LogonType` and `ComputerName`.
+**Telemetry:** Windows Security Event ID 4624 on the destination host. Event ID 4769 on a domain controller can provide Kerberos service-ticket context.
 
 ```spl
-index=windows sourcetype="WinEventLog:Security" EventCode=4624
-TargetUserName="svc-backup" Logon_Type=3
+index=windows sourcetype="XmlWinEventLog:Security" EventCode=4624
+TargetUserName="svc-backup" LogonType=3
+| eval source_ip=coalesce(IpAddress, Source_Network_Address)
 | stats count min(_time) as first_seen max(_time) as last_seen
-  values(ComputerName) as destination_hosts
-  values(IpAddress) as source_ips
+  values(host) as destination_hosts
+  values(source_ip) as source_ips
+  values(TargetLogonId) as logon_ids
+  values(AuthenticationPackageName) as auth_packages
   by TargetUserName
 | convert ctime(first_seen) ctime(last_seen)
 ```
 
-**Analyst review:** compare source host, logon type, authentication package and time of access against the service-account baseline. Validate approved backup operations before escalation.
+**Analyst review:** inspect raw events. Validate source IP-to-host mapping, destination host, logon type, authentication package and Logon ID. Compare against an approved service-account source-host baseline.
 
-**Tuning:** maintain an approved account-to-host mapping. Alert on new source hosts and unexpected logon types rather than suppressing all service-account activity.
+**Important:** field names vary by Windows event format. Some extractions use `Logon_Type`, `Target_Username` or other names. Confirm the raw event before relying on the search. A domain-controller Event ID 4769 is not a substitute for the destination server's Event ID 4624.
 
-## DET-02 — WMI spawning command interpreters
+## DET-02 — WMI provider spawning command interpreters
 
 **Objective:** identify WMI provider processes spawning command shells or scripting engines.
 
-**Telemetry:** Sysmon Event ID 1 or Security Event ID 4688 where process creation auditing is enabled.
+**Telemetry:** Sysmon Event ID 1.
 
 ```spl
 index=sysmon EventCode=1
 ParentImage="*\\WmiPrvSE.exe"
 (Image="*\\cmd.exe" OR Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
-| table _time Computer User ParentImage Image CommandLine ProcessGuid ParentProcessGuid
+| table _time host User ParentImage Image CommandLine
+  ProcessGuid ParentProcessGuid ProcessId ParentProcessId Hashes
 | sort 0 _time
 ```
 
-**Analyst review:** inspect parent and child command lines, user context, process signer, hash, source host and related network activity.
+**Analyst review:** inspect full process ancestry, user context, command line, signer, hash and related network activity. Correlate with WMI-Activity Operational records to identify the client machine and operation where those fields are logged.
 
-**Tuning:** baseline approved management platforms, deployment systems and administrative scripts. WMI is a legitimate Windows management interface; parent process alone is not sufficient for a malicious verdict.
+**Tuning:** baseline approved management platforms and deployment tooling. WMI is legitimate administration; the parent process alone does not prove remote or malicious execution.
 
 ## DET-03 — Unusual access to LSASS
 
-**Objective:** surface processes accessing LSASS outside expected security-product behaviour.
+**Objective:** surface processes accessing LSASS and retain context needed to distinguish security tooling from suspicious activity.
 
-**Telemetry:** Sysmon Event ID 10. Field names and access-mask representation vary by configuration.
+**Telemetry:** Sysmon Event ID 10.
 
 ```spl
 index=sysmon EventCode=10 TargetImage="*\\lsass.exe"
-| stats count values(GrantedAccess) as access_masks
-  values(SourceImage) as source_processes
-  values(Computer) as hosts
-  by SourceImage
-| sort - count
-```
-
-**Analyst review:** inspect source process path, signer, hash, user, command line and granted access rights. Correlate with EDR alerts and subsequent authentication activity.
-
-**Tuning:** establish a baseline for approved endpoint-security components. Do not alert on every LSASS handle request without context.
-
-## DET-04 — PowerShell discovery patterns
-
-**Objective:** identify PowerShell process or script-block activity containing discovery-related commands or suspicious execution patterns.
-
-**Telemetry:** Sysmon Event ID 1 and PowerShell Operational Event ID 4104. These sources may require separate searches and correlation because their schemas differ.
-
-Illustrative script-block search:
-
-```spl
-index=windows EventCode=4104
-| eval script_text=coalesce(ScriptBlockText, Message)
-| where match(script_text,
-  "(?i)(Get-ADUser|Get-ADComputer|Get-Service|Get-LocalGroupMember|FromBase64String|DownloadString)")
-| table _time host User script_text
+| table _time host User SourceImage SourceProcessGuid SourceProcessId
+  TargetImage GrantedAccess CallTrace
 | sort 0 _time
 ```
 
-**Analyst review:** retrieve the complete script block, correlate with process creation and identify the account, parent process, host role and execution frequency.
+**Analyst review:** inspect source process path, signer, hash, parent process, user and granted access mask. Correlate with EDR alerts, file creation and subsequent authentication. Do not infer successful credential extraction from Event ID 10 alone.
 
-**Tuning:** keyword matches are leads for investigation, not a maliciousness verdict. Validate benign administration scripts and multiline event handling.
+## DET-04 — PowerShell discovery patterns
 
-## DET-05 — File staging in an unusual directory
+**Objective:** identify script-block content containing discovery-related commands or suspicious execution patterns.
 
-**Objective:** identify file creation in a monitored staging path.
+**Telemetry:** PowerShell Operational Event ID 4104.
 
-**Telemetry:** Sysmon Event ID 11 or endpoint file telemetry.
+```spl
+index=windows sourcetype="XmlWinEventLog:Microsoft-Windows-PowerShell/Operational" EventCode=4104
+| eval script_text=coalesce(ScriptBlockText, Message)
+| where match(script_text,
+  "(?i)(Get-ADUser|Get-ADComputer|Get-Service|Get-LocalGroupMember|FromBase64String|DownloadString)")
+| table _time host User ProcessID ScriptBlockId script_text
+| sort 0 _time
+```
+
+**Analyst review:** retrieve all fragments for the same ScriptBlockId, where available, and correlate with process creation, account, parent process and host role.
+
+**Tuning:** keyword matches are investigative leads, not a maliciousness verdict. Validate benign administrative scripts and multiline event handling.
+
+## DET-05 — File creation in a staging path
+
+**Objective:** identify file creation in a monitored directory and retain the creating process.
+
+**Telemetry:** Sysmon Event ID 11.
 
 ```spl
 index=sysmon EventCode=11
 TargetFilename="*\\ProgramData\\Cache\\*"
-| stats count values(TargetFilename) as files
-  min(_time) as first_seen max(_time) as last_seen
-  by Computer User
-| convert ctime(first_seen) ctime(last_seen)
+| table _time host User Image ProcessGuid TargetFilename
+| sort 0 _time
 ```
 
-**Analyst review:** identify the creating process, file size, hash, source location and subsequent access. Correlate with archive utilities, removable-media events and outbound network records.
+**Analyst review:** identify the creating process and compare staged files with source files using names, sizes, hashes and timestamps. Event ID 11 records file creation; it does not independently establish the source file or copy mechanism.
 
-## DET-06 — Outbound connection review
+## DET-06 — Outbound network activity
 
-**Objective:** identify outbound connections initiated by monitored endpoints and prioritise unusual destinations or processes.
+**Objective:** identify outbound network connections and retain process and destination context.
 
-**Telemetry:** Sysmon Event ID 3, firewall or proxy logs.
+**Telemetry:** Sysmon Event ID 3, firewall and proxy logs.
 
 ```spl
 index=sysmon EventCode=3 Initiated=true
-| stats count values(DestinationIp) as destinations
-  values(DestinationPort) as ports
-  by Computer Image
-| sort - count
+| table _time host User Image ProcessGuid SourceIp SourcePort
+  DestinationIp DestinationPort Protocol
+| sort 0 _time
 ```
 
-**Analyst review:** inspect connection state, destination reputation, DNS resolution, process attribution, bytes sent/received and proxy/firewall disposition. A connection attempt is not proof of a completed session or data transfer.
+**Analyst review:** inspect process attribution, destination, DNS context, firewall disposition, connection state and bytes sent/received. Confirm whether the connection was allowed, blocked or reset using network-control telemetry.
+
+## DET-07 — File staging and outbound activity on the same host
+
+**Objective:** prioritise hosts with file creation in the monitored staging path and outbound connections in the same short time window.
+
+```spl
+(index=sysmon EventCode=11 TargetFilename="*\\ProgramData\\Cache\\*")
+OR (index=sysmon EventCode=3 Initiated=true)
+| eval activity=case(EventCode=11, "staging", EventCode=3, "outbound")
+| bin _time span=15m
+| stats count(eval(activity="staging")) as staging_events
+  count(eval(activity="outbound")) as outbound_events
+  values(TargetFilename) as staged_paths
+  values(DestinationIp) as destinations
+  values(DestinationPort) as destination_ports
+  values(Image) as processes
+  by host _time
+| where staging_events>0 AND outbound_events>0
+| sort 0 _time
+```
+
+**Interpretation:** this is a prioritisation hunt based on host and time-window co-occurrence. It does not prove that a staged file was transmitted. Review the raw events and correlate process identifiers, network records and transfer evidence.
 
 ## Correlation approach
 
-For a real investigation, correlate the identity, process, file and network searches using host, user, process GUID, logon ID and bounded time windows. Do not join solely on approximate timestamps where stronger identifiers are available.
+Prefer stable identifiers over timestamp proximity:
 
-The combination of file staging and outbound network activity on one host is a useful investigative lead. It does not prove that the staged files were transmitted.
+- **Identity:** account SID, TargetLogonId, SubjectLogonId and source address.
+- **Process:** ProcessGuid, ParentProcessGuid, PID and parent PID.
+- **WMI:** client machine, user, operation and client process ID where available.
+- **Files:** path, creating process, file size, timestamps and SHA-256.
+- **Network:** process, source/destination tuple, disposition, session state and byte counts.
+
+Do not join unrelated event sources solely because their timestamps are close. Use bounded time windows only when stronger identifiers are unavailable, and label the result as temporal correlation.
 
 ## Validation plan
 
-- [ ] Confirm index and sourcetype for each telemetry source.
-- [ ] Verify field names against raw events.
-- [ ] Confirm event collection and retention coverage.
+- [ ] Confirm index, sourcetype and field extraction for each source.
+- [ ] Inspect raw events and verify field names.
+- [ ] Confirm event collection, audit policy and retention coverage.
 - [ ] Run each search over a documented time range.
-- [ ] Review raw events behind aggregated results.
+- [ ] Review raw events behind every aggregate.
 - [ ] Test known-good administrative activity.
 - [ ] Test controlled suspicious activity in an isolated lab.
 - [ ] Record false positives, missed events and tuning decisions.
-- [ ] Preserve query text, screenshots and sample event references.
+- [ ] Preserve query text, sample event references and screenshots.
 - [ ] Mark detections as validated only after repeatable testing.
 
 ## Current validation status
 
-The searches in this document are proposed hunt logic. They have not been executed against the case telemetry or validated in a Splunk environment as part of this repository. Field names and event availability must be checked before operational use.
+These searches are proposed hunt logic. They have not been executed against primary case telemetry or validated in a Splunk environment as part of this repository. Field names and event availability must be confirmed before operational use.
