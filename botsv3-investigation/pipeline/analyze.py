@@ -131,12 +131,17 @@ def main() -> None:
         if row["src_ip"] and row["user"]:
             ip_users[row["src_ip"]].add(row["user"])
 
+    timestamped_count = sum(1 for row in normalized if row["timestamp_utc"])
+    untimestamped_count = len(normalized) - timestamped_count
+
     inventory = {
         "scope": "six selected public BOTSv3-derived fixture slices; not full index inventory",
         "total_fixture_events": len(events),
+        "timestamped_event_count": timestamped_count,
+        "untimestamped_event_count": untimestamped_count,
         "by_fixture": dict(sorted(fixture_counts.items())),
         "by_sourcetype": dict(sorted(source_counts.items())),
-        "users_by_sourcetype": {k: sorted(v) for k, v in sorted(user_sources.items())},
+        "sourcetypes_by_user": {k: sorted(v) for k, v in sorted(user_sources.items())},
         "shared_source_ips_and_users": {
             k: sorted(v) for k, v in sorted(ip_users.items()) if len(v) > 1
         },
