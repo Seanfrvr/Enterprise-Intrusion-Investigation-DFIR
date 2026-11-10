@@ -25,13 +25,13 @@ The evidence described in this case does not establish the initial credential-co
 
 ## Scope and coverage
 
-The review period is 2026-10-21 08:10–10:05 UTC. The described scope includes NS-WS044, NS-DC01, NS-FS01 and NS-WEB01, with identity, process, PowerShell, file and network activity.
+The review period is 2026-10-21 08:10to10:05 UTC. The described scope includes NS-WS044, NS-DC01, NS-FS01 and NS-WEB01, with identity, process, PowerShell, file and network activity.
 
 The case does not include packet capture, cloud audit records, email telemetry, endpoint memory acquisition, complete forensic disk images or comprehensive domain-wide event coverage. These gaps prevent a reliable determination of initial access, persistence, full compromise scope and data-loss impact.
 
 ## Provisional severity and business risk
 
-**Provisional severity: High — pending validation.**
+**Provisional severity: High, pending validation.**
 
 The proposed severity is based on the combination of a privileged service identity, activity across multiple systems, suspicious LSASS access and access to finance data. It is not a confirmed impact rating.
 
