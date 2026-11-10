@@ -23,10 +23,10 @@ python pipeline/analyze.py
 
 Generated files:
 
-- `output/fixture-integrity.json` — SHA-256 and byte/record counts for the local fixture files.
-- `output/inventory.json` — fixture-scoped sourcetype counts and identity/IP pivots.
-- `output/normalized-events.csv` — normalized events with original fixture/line references.
-- `output/timeline.json` — records with parseable timestamps, sorted in UTC.
+- `output/fixture-integrity.json` , SHA-256 and byte/record counts for the local fixture files.
+- `output/inventory.json` , fixture-scoped sourcetype counts and identity/IP pivots.
+- `output/normalized-events.csv` , normalized events with original fixture/line references.
+- `output/timeline.json` , records with parseable timestamps, sorted in UTC.
 
 Generated output is reproducible and can be deleted/rebuilt. The original JSONL
 fixtures are never modified.
