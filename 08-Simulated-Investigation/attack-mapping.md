@@ -1,27 +1,32 @@
 # MITRE ATT&CK Mapping
+### Northstar Logistics | Behaviour-to-Technique Assessment
 
-<sub>Candidate mappings for a fictional scenario · Not attribution</sub>
+The table maps behaviours described in the case narrative to candidate ATT&CK techniques. Mappings are provisional and should be confirmed against primary telemetry before being treated as incident findings.
 
-Mappings below describe behaviours represented in the synthetic evidence. They are not proof that a real actor used these techniques. Technique selection should be revisited if the evidence changes.
-
-| Simulated behaviour | Candidate technique | ID | Evidence | Assessment |
+| Behaviour described | ATT&CK technique | ID | Evidence reference | Assessment |
 |---|---|---|---|---|
-| Use of a privileged account outside its documented pattern | Valid Accounts | T1078 | E-001, E-002 | Supported as suspicious account use; credential compromise mechanism unknown |
-| WMI-associated process creation | Windows Management Instrumentation | T1047 | E-003 | Supported by the synthetic process chain; legitimate administration remains an alternative |
-| PowerShell discovery commands | PowerShell | T1059.001 | E-004, E-005 | Supported as PowerShell execution; malicious intent inferred from context |
-| Access to LSASS by an unusual process | OS Credential Dumping: LSASS Memory | T1003.001 | E-006 | Candidate mapping; LSASS access is not proof of successful dumping |
-| Network logon to another server | Remote Services / SMB or Windows Admin Shares | T1021.002 (only if SMB evidence confirms) | E-007 | Provisional; logon alone is insufficient to select a specific remote-service sub-technique |
-| Copying finance files to a local staging directory | Data from Local System | T1005 (only if local collection is confirmed) | E-008, E-009 | Candidate mapping; file access and copy records support collection/staging |
-| Outbound connection attempt | Application Layer Protocol or non-standard port (depending on protocol evidence) | Not assigned | E-010 | Insufficient protocol and payload evidence for a defensible technique mapping |
+| Privileged account used outside its documented pattern | Valid Accounts | T1078 | E-001, E-002 | Suspicious account use is described; credential compromise mechanism is unknown |
+| WMI-associated process creation | Windows Management Instrumentation | T1047 | E-003 | Process lineage is consistent with WMI execution; legitimate administration remains an alternative |
+| PowerShell discovery commands | PowerShell | T1059.001 | E-004, E-005 | PowerShell execution is described; malicious intent is contextual |
+| Unusual process access to LSASS | OS Credential Dumping: LSASS Memory | T1003.001 | E-006 | Candidate mapping only; access does not establish successful credential dumping |
+| Remote access to another server | Remote Services | T1021 | E-007 | Parent technique is a candidate; specific sub-technique requires protocol/service evidence |
+| Finance data accessed and staged locally | Data from Local System | T1005 | E-008, E-009 | Candidate mapping; file access and staging are described, but exact collection method needs validation |
+| Outbound TCP connection attempt | No technique assigned | — | E-010 | Protocol, payload and session outcome are insufficient to support a C2 mapping |
 
-## Mapping discipline
+## Mapping rationale and gaps
 
-- Map the behaviour actually evidenced, not the presumed objective.
-- Prefer a parent technique when the available evidence cannot support a sub-technique.
-- Do not map a network connection to command-and-control without sufficient protocol or operational context.
-- Do not map file staging to exfiltration without evidence of transfer outside the environment.
-- Record alternative explanations and the telemetry needed to strengthen or reject each mapping.
+**Valid Accounts (T1078):** the account activity is described as inconsistent with the service-account baseline. The available case narrative does not establish whether the credentials were stolen, shared, misconfigured or legitimately used under an undocumented change.
 
-## ATT&CK coverage gaps
+**Windows Management Instrumentation (T1047):** the described WMI provider process lineage supports investigation of WMI execution. Source-host and remote-operation telemetry would strengthen the mapping.
 
-The scenario does not establish the initial access vector, malware family, persistence mechanism, successful credential dumping, data exfiltration or operator attribution. These remain explicit investigation gaps rather than assumed techniques.
+**PowerShell (T1059.001):** the script-block description supports PowerShell use. The analyst must distinguish discovery activity from legitimate administrative automation.
+
+**OS Credential Dumping: LSASS Memory (T1003.001):** LSASS access is a credential-access indicator. Evidence of a dump operation, memory artefact or recovered credentials would be needed to confirm the specific technique.
+
+**Remote Services (T1021):** a network logon to another server does not identify the remote service used. SMB, RDP, WinRM or another protocol must be established before assigning a sub-technique.
+
+**Data from Local System (T1005):** file access and local staging may be consistent with collection. The exact process and collection mechanism require corroboration.
+
+## Techniques not assigned
+
+The case does not provide sufficient support for a specific initial-access technique, persistence technique, command-and-control technique or exfiltration technique. These are investigation gaps, not implied findings. Do not assign ATT&CK techniques solely to make the matrix appear complete.
