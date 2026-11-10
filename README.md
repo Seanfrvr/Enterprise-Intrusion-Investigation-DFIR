@@ -28,7 +28,8 @@ It combines reusable SOC/DFIR methodology with a structured enterprise intrusion
 | [Incident response](06-Incident-Response/response-recommendations.md) | Containment through recovery |
 | [Evidence catalogue](07-Evidence/evidence-catalogue.md) | Evidence register and handling standard |
 | [Timeline](07-Evidence/intrusion-timeline.md) | Timestamp normalisation and event sequencing |
-| [Enterprise intrusion case study](08-Simulated-Investigation/) | Incident assessment, findings, timeline, evidence register, detection analysis and ATT&CK mapping |
+| [Enterprise intrusion case study](08-Simulated-Investigation/) | Reconstructed Northstar scenario, clearly separated from dataset-backed work |
+| [BOTSv3 investigation](09-BOTSv3-Investigation/) | Splunk dataset provenance, hunt workbook, analyst notebook, evidence handling and detection validation |
 
 ## What this project demonstrates
 
@@ -89,4 +90,4 @@ No search is described as tested unless it has been executed against a known dat
 
 The case study needs primary telemetry, source hashes, reproducible searches and original screenshots before it can demonstrate a completed hands-on investigation. The next technical milestone is to validate the event relationships and SPL against a permitted dataset, preserve the underlying records and update each finding only where the evidence supports it.
 
-**Project status:** investigation methodology and a detailed reconstructed case-study report are documented. Dataset-backed validation and original evidence artefacts remain outstanding.
+**Project status:** the Northstar case is reconstructed. The BOTSv3 workstream contains dataset-grounded preparation and hunt logic; local dataset acquisition, search execution, event validation and original screenshots remain outstanding. No BOTSv3 findings are claimed until they are reproduced from the dataset.
