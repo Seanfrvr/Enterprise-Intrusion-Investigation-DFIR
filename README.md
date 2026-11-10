@@ -103,7 +103,7 @@ relying on SPL.
 The BOTSv3 workstream contains 83 records from six selected, attributed event
 extracts; a Python pipeline for fixture-scoped integrity, normalization,
 inventory and timeline generation; and a findings report with confidence
-limits and follow-up pivots. GitHub Actions run 33 passed on 10 November 2026,
+limits and follow-up pivots. GitHub Actions run 41 passed on 10 November 2026,
 including the pipeline tests and artifact generation.
 
 The full BOTSv3 archive has not been downloaded and installed in Splunk in
