@@ -1,34 +1,34 @@
 # Evidence Catalogue
 
-Use this register while collecting evidence. Create one row per source artefact or exported record set; do not fill fields from memory after the investigation.
+## Purpose
+
+The evidence catalogue provides traceability between investigative conclusions and the artefacts that support them. It is a template until populated from a dataset that may be used and published.
 
 ## Evidence register
 
-| ID | Source / host | Collection time (with zone) | Original time range | Record / file reference | SHA-256 | Handling / redaction |
+| Evidence ID | Source / data type | Host / account | Original time and zone | Observation | Integrity / handling | Publication status |
 |---|---|---|---|---|---|---|
-| E-001 | Pending | Pending | Pending | Pending | Pending | Pending |
+| E-001 | Pending | Pending | Pending | Pending | Pending | Not populated |
 
-## Analyst observation
+## Required metadata
 
-For each evidence ID, add a short entry using this structure:
+For every item, record:
 
-- **Observed:** the exact value or behaviour visible in the source.
-- **Context:** account, host, process, event ID or network tuple.
-- **Relevance:** which investigative question it helps answer.
-- **Limit:** what this artefact cannot establish by itself.
-- **Next pivot:** the next source or identifier to check.
+- Unique evidence identifier.
+- Original source and collection method.
+- Host, account, process or network context.
+- Original timestamp and time zone.
+- Normalised timestamp, if converted to UTC.
+- Relevant event ID, file path, query or record identifier.
+- Hash or integrity information where appropriate.
+- Analyst observation and interpretation.
+- Confidence and limitations.
+- Whether the item is suitable for public release.
 
-Keep observations separate from conclusions. If a value was not collected, write "not available"; do not infer it.
+## Evidence handling
 
-## Handling
+Preserve original data and work from copies. Do not modify original screenshots or logs. If a presentation copy is redacted, retain a record of what was removed and why. Never publish credentials, tokens, personal data, confidential business information or material that the analyst is not authorised to redistribute.
 
-- Preserve original exports and analyse working copies.
-- Record the collection tool, command/query and collector.
-- Hash files where appropriate and retain the hash with the original.
-- Keep original timestamps and time zones; document any UTC conversion.
-- Redact credentials, tokens, personal data and confidential information before publication.
-- Keep a note of what was redacted and why.
+## Evidence quality
 
-A screenshot helps explain an investigation but is not a substitute for the underlying event. Capture the query, time range, source and relevant fields, and retain the event export where authorised.
-
-**Current repository status:** the Northstar case register is illustrative. This catalogue is a blank working format; it does not represent collected evidence.
+A screenshot is a visual aid, not a substitute for source data. Where possible, retain the underlying event record, query, timestamp and data-source context so that another analyst can understand and reproduce the reasoning.
