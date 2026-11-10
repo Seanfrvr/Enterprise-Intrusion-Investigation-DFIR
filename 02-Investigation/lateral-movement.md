@@ -1,40 +1,37 @@
-# Lateral Movement
+# Discovery and Lateral Movement
 
-## Investigation question
+## Objective
 
-Did an account or operator use one system to access another system, and what remote service or execution method was involved?
+Determine how an actor may have discovered other systems and whether access moved from one host or identity to another.
 
-## Start with the destination
+## Useful Windows telemetry
 
-On the destination host, inspect successful logons:
+| Event | General significance |
+|---|---|
+| 4624 | Successful logon |
+| 4625 | Failed logon |
+| 4648 | Logon using explicit credentials |
+| 4672 | Special privileges assigned to a new logon |
+| 4768 | Kerberos authentication ticket requested |
+| 4769 | Kerberos service ticket requested |
+| 4776 | NTLM credential validation |
+| 4688 | Process creation, if enabled |
 
-- **4624:** successful logon. Review logon type, account, source address, authentication package and TargetLogonId.
-- **4672:** special privileges assigned to a logon. Correlate using the logon identifier; it is not proof of malicious privilege use.
-- **4688 / Sysmon 1:** process creation after the logon, if collection is enabled.
+Event availability depends on audit policy, domain role and log source.
 
-On the domain controller, use:
+## Analysis method
 
-- **4768:** Kerberos TGT request.
-- **4769:** Kerberos service-ticket request.
-- **4776:** NTLM credential validation.
+1. Identify the suspected source host, destination host and account.
+2. Build a timeline of authentication events across both systems.
+3. Review logon type, source address, workstation name and authentication package where available.
+4. Correlate successful logons with remote service access, process creation and file transfers.
+5. Compare the activity with normal administration and service-account behaviour.
+6. Look for repeated access patterns across multiple hosts.
 
-A 4769 event provides Kerberos context; it does not prove the destination server accepted a logon. Confirm access in the destination host's records.
+## Correlation cautions
 
-## Useful pivots
+A Kerberos service-ticket request is common in normal domain activity. A successful logon is not automatically lateral movement. Stronger conclusions require source/destination context, unusual account behaviour and related execution or access evidence.
 
-1. Start from the destination's 4624 record.
-2. Record account, source address, logon type, authentication package and TargetLogonId.
-3. Correlate 4672 and later events on that destination using the Logon ID.
-4. Check source-host telemetry for the initiating process and network connection.
-5. Identify the service: SMB, RDP, WinRM, WMI, remote service creation or another mechanism.
-6. Compare the account-to-host relationship with normal administration and service-account use.
+## Detection opportunities
 
-## What would strengthen the conclusion?
-
-- A successful destination logon from an unexpected source.
-- A related remote service or protocol record.
-- Process execution or file access tied to the same logon/session.
-- A source-host process responsible for the connection.
-- Activity inconsistent with the account owner's documented workflow.
-
-A network logon alone does not identify the remote protocol or prove hands-on-keyboard activity. Record the exact evidence and leave the mechanism unresolved until it is established.
+Hunt for privileged accounts authenticating to unusual hosts, remote logons outside expected administration windows, explicit-credential use followed by remote execution, and rare account-to-host relationships. Tune for helpdesk, deployment, backup and endpoint-management systems.
