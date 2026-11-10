@@ -49,7 +49,7 @@ only the selected extracts, not the complete BOTSv3 index.
 
 ## Findings
 
-### F-01, AWS console access without MFA and S3 bucket reconnaissance
+### F-01: AWS console access without MFA and S3 bucket reconnaissance
 
 **Source:** `01-aws-recon-bstoll.jsonl`, records 1 to 20 
 **Observed identity:** IAM user `bstoll` 
@@ -75,7 +75,7 @@ GuardDuty and network telemetry.
 **Confidence:** high for the recorded actions; moderate for malicious
 reconnaissance; no conclusion on data access or exfiltration.
 
-### F-02, BSTOLL-L logon excerpt is insufficient to rule out remote access
+### F-02: BSTOLL-L logon excerpt is insufficient to rule out remote access
 
 **Source:** `02-bstoll-l-endpoint.jsonl`, records 1 to 11 
 **Host:** `BSTOLL-L`
@@ -96,7 +96,7 @@ process telemetry.
 **Confidence:** high for the listed records; low for any broader negative
 claim.
 
-### F-03, Coinhive-related DNS activity from an internal client
+### F-03: Coinhive-related DNS activity from an internal client
 
 **Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1 to 12 
 **Client:** `192.168.247.131` 
@@ -121,7 +121,7 @@ across the full dataset.
 **Confidence:** high for the DNS queries and responses; moderate for Coinhive
 infrastructure contact; insufficient alone to prove cryptojacking.
 
-### F-04, Hidden PowerShell execution on FYODOR-L
+### F-04: Hidden PowerShell execution on FYODOR-L
 
 **Source:** `04-fyodor-powershell-empire.jsonl`, records 1 to 4 
 **Host:** `FYODOR-L`
@@ -149,7 +149,7 @@ before analysis.
 **Confidence:** high for the observed command line; moderate-to-high for
 malicious intent; persistence and payload behaviour require corroboration.
 
-### F-05, Azure AD sign-ins for two identities from a shared Hong Kong IP
+### F-05: Azure AD sign-ins for two identities from a shared Hong Kong IP
 
 **Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1 to 20 
 **Identities:** `fyodor@froth.ly`, `bgist@froth.ly` 
@@ -174,7 +174,7 @@ token issuance and subsequent cloud audit events.
 **Confidence:** high for the recorded successful sign-ins and IP/location
 fields; moderate for suspicious account use; attribution remains unproven.
 
-### F-06, Anonymous OneDrive link activity and Exchange mailbox changes
+### F-06: Anonymous OneDrive link activity and Exchange mailbox changes
 
 **Source:** `06-o365-cloud-account-abuse.jsonl`, records 1to16
 
