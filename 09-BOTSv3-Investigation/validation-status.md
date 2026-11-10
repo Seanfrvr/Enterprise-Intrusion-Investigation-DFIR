@@ -14,7 +14,7 @@
 - Full BOTSv3 archive acquisition and MD5 verification.
 - Installation of the full dataset in Splunk.
 - Full-index event counts, sourcetype inventory or field-extraction validation.
-- Execution of the hunt workbook against the complete \`index=botsv3\`.
+- Execution of the hunt workbook against the complete `index=botsv3`.
 - Review of all surrounding raw events and complete time windows.
 - Original screenshots captured from a live Splunk search session.
 - Detection performance, false-positive and false-negative testing against a benign baseline.
