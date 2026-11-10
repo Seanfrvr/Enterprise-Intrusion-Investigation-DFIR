@@ -164,6 +164,105 @@ index=botsv3 sourcetype=stream:http earliest=0
 
 After confirming fields, examine method, host, URI, user agent, source/destination addresses, response code and byte counts where present. A request path or unusual method is a lead, not proof of exploitation or successful transfer.
 
+
+## 5. Fixture-informed hunts for full-index validation
+
+The following searches are based on fields visible in the selected upstream
+fixture records. Confirm that the full BOTSv3 index has the same field
+extractions before treating results as complete.
+
+### H-040 — AWS console sign-ins without MFA
+
+```spl
+index=botsv3 sourcetype=aws:cloudtrail earliest=0
+| spath
+| search eventName=ConsoleLogin responseElements.ConsoleLogin=Success additionalEventData.MFAUsed=No
+| table _time userIdentity.userName userIdentity.arn sourceIPAddress userAgent additionalEventData.MFAUsed eventID
+| sort 0 _time
+```
+
+**Question:** which successful console sign-ins in the full index record no MFA?
+Compare source IP, user agent, principal and surrounding CloudTrail activity.
+Do not equate missing MFA with compromise.
+
+### H-041 — S3 bucket ACL enumeration
+
+```spl
+index=botsv3 sourcetype=aws:cloudtrail earliest=0 eventSource=s3.amazonaws.com eventName=GetBucketAcl
+| spath
+| stats count AS acl_checks dc(requestParameters.bucketName) AS distinct_buckets
+        values(requestParameters.bucketName) AS buckets
+        values(sourceIPAddress) AS source_ips
+        values(userIdentity.accessKeyId) AS access_keys
+        by userIdentity.userName userIdentity.arn
+| sort - acl_checks
+```
+
+**Question:** are principals inspecting many buckets in a short period?
+Expand the matching principal's raw event sequence and distinguish ACL
+enumeration from subsequent object access.
+
+### H-042 — Coinhive DNS lookups
+
+```spl
+index=botsv3 sourcetype=stream:dns earliest=0
+| search name="*coinhive.com" OR query="*coinhive.com"
+| eval queried_domain=coalesce(name,query), client=coalesce(src_ip,src)
+| stats count values(message_type) AS dns_message_types
+        values(host_addr) AS resolved_addresses
+        by client queried_domain
+| sort - count
+```
+
+**Question:** which clients queried Coinhive-related domains, and are there
+matching DNS responses? DNS activity alone does not establish code execution.
+
+### H-043 — Hidden PowerShell and registry-backed execution
+
+```spl
+index=botsv3 sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" earliest=0 EventCode=1
+| search Image="*powershell.exe" CommandLine="*IEX*" CommandLine="*FromBase64String*"
+| table _time host Computer User ParentImage ParentCommandLine Image CommandLine ProcessGuid ParentProcessGuid
+| sort 0 _time
+```
+
+**Question:** where does this execution pattern occur, what launched it, and
+which process GUIDs support lineage? Validate the actual sourcetype spelling
+and field names from raw events first.
+
+### H-044 — Azure AD successful sign-ins from a shared IP
+
+```spl
+index=botsv3 sourcetype=ms:aad:signin earliest=0
+| search loginStatus=Success
+| stats dc(userPrincipalName) AS distinct_users
+        values(userPrincipalName) AS users
+        values(appDisplayName) AS applications
+        values(location.country) AS countries
+        by ipAddress
+| where distinct_users > 1
+| sort - distinct_users
+```
+
+**Question:** do multiple identities authenticate successfully from one
+source IP? Enrich with device, session, authentication and conditional-access
+context before assigning risk.
+
+### H-045 — Anonymous sharing and mailbox changes
+
+```spl
+index=botsv3 sourcetype=ms:o365:management earliest=0
+| search Operation=AnonymousLinkCreated OR Operation=AnonymousLinkUsed OR Operation=Set-Mailbox
+| table _time Operation UserId ClientIP Workload SourceFileName ObjectId Param_Name Param_Value ResultStatus
+| sort 0 _time
+```
+
+**Question:** which users created or consumed anonymous links, and which
+mailbox changes followed? Validate actor privileges, target objects and
+change authorization. A shared link is not proof that a file was executed
+or that data was stolen.
+
+
 ## 5. Correlation discipline
 
 Use this order when connecting records:
