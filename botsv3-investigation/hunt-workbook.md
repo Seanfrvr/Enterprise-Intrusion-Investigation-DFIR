@@ -165,7 +165,7 @@ index=botsv3 sourcetype=stream:http earliest=0
 After confirming fields, examine method, host, URI, user agent, source/destination addresses, response code and byte counts where present. A request path or unusual method is a lead, not proof of exploitation or successful transfer.
 
 
-## 5. Fixture-informed hunts for full-index validation
+## 5. Fixture informed hunts for full index validation
 
 The following searches are based on fields visible in the selected upstream
 fixture records. Confirm that the full BOTSv3 index has the same field
@@ -185,7 +185,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0
 Compare source IP, user agent, principal and surrounding CloudTrail activity.
 Do not equate missing MFA with compromise.
 
-### H-041: S3 bucket ACL enumeration
+### H-041: S3 bucket ACL inspection
 
 ```spl
 index=botsv3 sourcetype=aws:cloudtrail earliest=0 eventSource=s3.amazonaws.com eventName=GetBucketAcl
@@ -193,7 +193,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0 eventSource=s3.amazonaws.com e
 | stats count AS acl_checks dc(requestParameters.bucketName) AS distinct_buckets
         values(requestParameters.bucketName) AS buckets
         values(sourceIPAddress) AS source_ips
-        dc(userIdentity.accessKeyId) AS distinct_temporary_credentials
+        dc(userIdentity.accessKeyId) AS distinct_access_key_ids
         by userIdentity.userName userIdentity.arn
 | sort - acl_checks
 ```
@@ -263,7 +263,7 @@ change authorization. A shared link is not proof that a file was executed
 or that data was stolen.
 
 
-## 5. Correlation discipline
+## 6. Correlation discipline
 
 Use this order when connecting records:
 
@@ -275,7 +275,7 @@ Use this order when connecting records:
 
 Avoid broad `join` operations as the default. Prefer targeted pivots and small, inspectable result sets. Where correlation uses only time and IP, describe it as a lead rather than attribution.
 
-## 6. Search record
+## 7. Search record
 
 For every executed hunt, preserve:
 
@@ -294,6 +294,6 @@ For every executed hunt, preserve:
 
 Do not change a query after execution without recording the revised version. Keep the original search alongside the final one so another analyst can reproduce the pivot.
 
-## 7. Exit criteria
+## 8. Exit criteria
 
 A hunt is ready to become a finding only when the relevant raw events have been inspected, the key fields are understood, the event sequence is reproducible and plausible benign explanations have been considered. A hunt is ready to become a detection only after testing against both relevant and benign activity, documenting coverage gaps and defining useful alert context.
