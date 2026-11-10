@@ -3,7 +3,7 @@
 
 The following findings organise the case narrative into observations, assessments, confidence limits and follow-up actions. Evidence IDs refer to the [evidence register](evidence-register.md). Primary telemetry is not retained in this portfolio version; therefore, the confidence labels describe the internal consistency of the case narrative, not independently verified source evidence.
 
-## F-01 — Privileged service-account authentication outside baseline
+## F-01, Privileged service-account authentication outside baseline
 
 **Observation**
 
@@ -23,7 +23,7 @@ The source workstation is inconsistent with the documented service-account patte
 
 **Further investigation:** validate the account owner and approved source hosts; correlate Event IDs 4769, 4624 and 4672 using account, source address, service name and Logon ID where available; review authentication package, logon type and historical account activity.
 
-## F-02 — WMI-associated process execution on NS-FS01
+## F-02, WMI-associated process execution on NS-FS01
 
 **Observation**
 
@@ -43,7 +43,7 @@ The process lineage is consistent with execution through the Windows Management 
 
 **Further investigation:** correlate Sysmon Event ID 1 with Security Event ID 4688 where available; review WMI-Activity Operational records for client machine, user, operation and client process ID; identify the source host and RPC/DCOM network context; inspect process hashes, signatures, command lines and approved management tooling.
 
-## F-03 — PowerShell host and domain discovery
+## F-03, PowerShell host and domain discovery
 
 **Observation**
 
@@ -62,7 +62,7 @@ The commands are consistent with host and domain discovery. They can also occur 
 
 **Further investigation:** retrieve complete Event ID 4104 records; correlate script-block IDs with process creation and Event ID 4103 where available; inspect transcription and module logging; identify the initiating process, user and execution prevalence.
 
-## F-04 — Unusual process access to LSASS
+## F-04, Unusual process access to LSASS
 
 **Observation**
 
@@ -82,7 +82,7 @@ Unusual process access to LSASS is a significant credential-access indicator. Ev
 
 **Further investigation:** preserve the executable and metadata; calculate its SHA-256 hash; verify signer and file reputation; inspect source process GUID, PID, command line, user, granted access mask and call trace; review EDR alerts and memory evidence; hunt for possible credential reuse.
 
-## F-05 — Inter-host authentication and finance-data staging
+## F-05, Inter-host authentication and finance-data staging
 
 **Observation**
 
@@ -102,7 +102,7 @@ The NS-WEB01 logon establishes an inter-host authentication event in the case na
 
 **Further investigation:** correlate Event ID 4624 on NS-WEB01 with source address, logon type and Logon ID; identify the remote service using SMB, RDP or WinRM telemetry; review file Event ID 4663 where auditing is configured; identify the process creating the staged files; compare source and destination hashes, sizes and timestamps.
 
-## F-06 — Outbound network activity from NS-FS01
+## F-06, Outbound network activity from NS-FS01
 
 **Observation**
 
@@ -121,7 +121,7 @@ The originating host and timing make the activity relevant to the investigation.
 
 **Further investigation:** review firewall allow/deny records, Sysmon Event ID 3, proxy and DNS logs; identify the process and user responsible; inspect connection state and byte counts; seek packet-level or receiving-side confirmation.
 
-## F-07 — Scope and impact remain undetermined
+## F-07, Scope and impact remain undetermined
 
 **Observation**
 
