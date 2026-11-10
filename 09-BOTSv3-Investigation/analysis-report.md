@@ -51,7 +51,7 @@ only the selected extracts, not the complete BOTSv3 index.
 
 ### F-01: AWS console access without MFA and S3 bucket reconnaissance
 
-**Source:** `01-aws-recon-bstoll.jsonl`, records 1 to 20 
+**Evidence:** E-001. **Source:** `01-aws-recon-bstoll.jsonl`, records 1 to 20 
 **Observed identity:** IAM user `bstoll` 
 **Observed source IPs:** `107.77.212.175`, `157.97.121.132`
 
@@ -77,7 +77,7 @@ reconnaissance; no conclusion on data access or exfiltration.
 
 ### F-02: BSTOLL-L logon excerpt is insufficient to rule out remote access
 
-**Source:** `02-bstoll-l-endpoint.jsonl`, records 1 to 11 
+**Evidence:** E-002. **Source:** `02-bstoll-l-endpoint.jsonl`, records 1 to 11 
 **Host:** `BSTOLL-L`
 
 The selected excerpt contains successful logon events for SYSTEM (type 5),
@@ -98,7 +98,7 @@ claim.
 
 ### F-03: Coinhive-related DNS activity from an internal client
 
-**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1 to 12 
+**Evidence:** E-003. **Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1 to 12 
 **Client:** `192.168.247.131` 
 **Queried names:** `coinhive.com` and multiple `wsNNN.coinhive.com` names
 
@@ -123,7 +123,7 @@ infrastructure contact; insufficient alone to prove cryptojacking.
 
 ### F-04: Hidden PowerShell execution on FYODOR-L
 
-**Source:** `04-fyodor-powershell-empire.jsonl`, records 1 to 4 
+**Evidence:** E-004. **Source:** `04-fyodor-powershell-empire.jsonl`, records 1 to 4 
 **Host:** `FYODOR-L`
 
 Two Sysmon Event ID 1 records show PowerShell executing with hidden-window
@@ -151,7 +151,7 @@ malicious intent; persistence and payload behaviour require corroboration.
 
 ### F-05: Azure AD sign-ins for two identities from a shared Hong Kong IP
 
-**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1 to 20 
+**Evidence:** E-005. **Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1 to 20 
 **Identities:** `fyodor@froth.ly`, `bgist@froth.ly` 
 **IP:** `104.207.83.63`
 
@@ -176,7 +176,7 @@ fields; moderate for suspicious account use; attribution remains unproven.
 
 ### F-06: Anonymous OneDrive link activity and Exchange mailbox changes
 
-**Source:** `06-o365-cloud-account-abuse.jsonl`, records 1to16
+**Evidence:** E-006. **Source:** `06-o365-cloud-account-abuse.jsonl`, records 1 to 16
 
 The extract shows `bgist@froth.ly` creating an anonymous sharing link for
 `BRUCE BIRTHDAY HAPPY HOUR PICS.lnk`, followed by a `SharingSet` event and
@@ -253,9 +253,9 @@ The AWS activity is described as bucket ACL inspection rather than confirmed clo
 6. Exchange Set-Mailbox operations that disable accounts or modify token
  validity, especially when initiated by an unusual actor.
 
-These are detection specifications to test and tune. They are not yet
-production-ready detections and have not been measured against the complete
-BOTSv3 index or a benign baseline.
+These are detection ideas to test and tune. They are not validated detections
+and have not been measured against the complete BOTSv3 index or a benign
+baseline.
 
 ## Response recommendations
 
