@@ -1,32 +1,28 @@
 # Investigation Timeline
 
-Build the timeline from source records, not from memory or an assumed attack sequence.
+## Purpose
 
-## Timeline worksheet
+A timeline helps correlate activity across identities, endpoints and network sources. It should be populated only from verified timestamps and traceable evidence.
 
-| Original timestamp | Time zone | UTC timestamp | Host | Account / process | Event summary | Evidence ID | Confidence |
+## Timeline rules
+
+- Preserve the original timestamp exactly as recorded.
+- Record the source time zone and any known clock offset.
+- Normalise to UTC for cross-source comparison, retaining the original value.
+- Do not invent missing timestamps or order events more precisely than the evidence allows.
+- Mark inferred ordering and uncertain times explicitly.
+- Link each row to an evidence identifier.
+
+## Timeline template
+
+| Original time | Time zone | Normalised UTC | Host | Account / process | Event summary | Evidence ID | Confidence |
 |---|---|---|---|---|---|---|---|
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
-## Working rules
+## Correlation notes
 
-- Preserve the timestamp exactly as the source recorded it.
-- Record the source host's time zone and known clock offset.
-- Keep original time and normalised UTC side by side.
-- Distinguish event time from SIEM ingestion time.
-- Link every row to an evidence ID.
-- Mark inferred ordering as inferred.
-- Do not create minute-level precision when the source only supports a broader time window.
+When timestamps conflict, consider clock drift, ingestion delay, event-generation time versus collection time, daylight-saving changes and differences between endpoint and SIEM time settings. Document the chosen ordering method.
 
-## Correlation
+## Summary
 
-Use identifiers where available:
-
-- **Windows logons:** Logon ID, account SID, source address and destination host.
-- **Processes:** Process GUID and ParentProcessGuid; use PID with host and time context.
-- **Files:** full path, process, size, hash and timestamps.
-- **Network:** source/destination IP and port, protocol, process and connection disposition.
-
-Temporal proximity is useful for finding pivots, but it does not prove that one event caused another. When records conflict, investigate clock drift, ingestion delay, time-zone settings and event-generation versus collection time.
-
-**Current repository status:** the Northstar timeline is a reconstructed exercise timeline, not a timeline derived from retained source events.
+A timeline is an analytical model, not proof of causation. Temporal proximity can support a hypothesis but does not establish that one event caused another.
