@@ -15,12 +15,12 @@ extracts. The local pipeline calculates SHA-256 for the exact current files.
 
 | Evidence ID | Source | Local reference | Evidential use | Status |
 |---|---|---|---|---|
-| E-001 | AWS CloudTrail | `01-aws-recon-bstoll.jsonl:1 to 20` | Console sign-ins, MFA metadata and S3 ACL calls attributed to `bstoll` | Collected, AWS identifiers redacted |
-| E-002 | Windows logon metadata | `02-bstoll-l-endpoint.jsonl:1 to 11` | Selected BSTOLL-L logon records | Collected fixture extract |
-| E-003 | DNS | `03-bstoll-coinhive-cryptojacking.jsonl:1 to 12` | Coinhive-related DNS queries and responses | Collected fixture extract |
-| E-004 | Sysmon | `04-fyodor-powershell-empire.jsonl:1 to 4` | PowerShell process creation records | Collected fixture extract |
-| E-005 | Azure AD sign-ins | `05-azure-ad-signin-anomaly.jsonl:1 to 20` | Selected successful and failed sign-in records | Collected fixture extract |
-| E-006 | Office 365 management | `06-o365-cloud-account-abuse.jsonl:1 to 16` | Sharing link and Exchange mailbox operations | Collected fixture extract |
+| E-001 | AWS CloudTrail | [01-aws-recon-bstoll.jsonl](data/fixtures/01-aws-recon-bstoll.jsonl), lines 1 to 20 | Console sign-ins, MFA metadata and S3 ACL calls attributed to `bstoll` | Collected, AWS identifiers redacted |
+| E-002 | Windows logon metadata | [02-bstoll-l-endpoint.jsonl](data/fixtures/02-bstoll-l-endpoint.jsonl), lines 1 to 11 | Selected BSTOLL-L logon records | Collected fixture extract |
+| E-003 | DNS | [03-bstoll-coinhive-cryptojacking.jsonl](data/fixtures/03-bstoll-coinhive-cryptojacking.jsonl), lines 1 to 12 | Coinhive-related DNS queries and responses | Collected fixture extract |
+| E-004 | Sysmon | [04-fyodor-powershell-empire.jsonl](data/fixtures/04-fyodor-powershell-empire.jsonl), lines 1 to 4 | PowerShell process creation records | Collected fixture extract |
+| E-005 | Azure AD sign-ins | [05-azure-ad-signin-anomaly.jsonl](data/fixtures/05-azure-ad-signin-anomaly.jsonl), lines 1 to 20 | Selected successful and failed sign-in records | Collected fixture extract |
+| E-006 | Office 365 management | [06-o365-cloud-account-abuse.jsonl](data/fixtures/06-o365-cloud-account-abuse.jsonl), lines 1 to 16 | Sharing link and Exchange mailbox operations | Collected fixture extract |
 
 The evidence IDs refer to fixture slices. They are not finding IDs or Splunk search job identifiers.
 Line numbers refer to the current committed local files.
