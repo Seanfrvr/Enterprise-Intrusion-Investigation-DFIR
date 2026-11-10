@@ -2,9 +2,10 @@
 
 ## Purpose
 
-The pipeline analyses the six committed BOTSv3 derived JSONL extracts. It
-produces a fixture inventory, normalized event table, integrity manifest and
-UTC timeline.
+The pipeline analyses the six committed BOTSv3-derived JSONL extracts.
+It produces a fixture inventory, normalized event table, integrity manifest
+and UTC timeline. The current fixture set contains 83 records: 36 have usable
+timestamps and 47 do not.
 
 It does not download the full BOTSv3 archive, install Splunk or query the
 `botsv3` index.
@@ -25,7 +26,7 @@ python -m unittest discover -s botsv3-investigation/pipeline -p "test_*.py" -v
 | File | Purpose |
 |---|---|
 | `output/fixture-integrity.json` | SHA256, byte count and record count for each local fixture |
-| `output/inventory.json` | Fixture scoped event and sourcetype counts |
+| `output/inventory.json` | Fixture-scoped event and sourcetype counts, timestamp coverage and user/source pivots |
 | `output/normalized-events.csv` | Normalized events with source filename and line references |
 | `output/timeline.json` | Timestamped records sorted in UTC |
 
@@ -46,6 +47,7 @@ describe the sanitized files, not the original upstream bytes.
 3. The normalized CSV is a convenience view, not a replacement for raw events.
 4. Shared usernames and IP addresses are pivots, not proof of common control.
 5. A selected fixture cannot support a negative finding about the full dataset.
+6. The inventory key `sourcetypes_by_user` maps each observed user string to the sourcetypes in which it appears.
 6. Every report finding must identify its fixture and record range.
 
 ## Full dataset validation
