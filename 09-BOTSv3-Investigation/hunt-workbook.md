@@ -193,7 +193,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0 eventSource=s3.amazonaws.com e
 | stats count AS acl_checks dc(requestParameters.bucketName) AS distinct_buckets
         values(requestParameters.bucketName) AS buckets
         values(sourceIPAddress) AS source_ips
-        values(userIdentity.accessKeyId) AS access_keys
+        dc(userIdentity.accessKeyId) AS distinct_temporary_credentials
         by userIdentity.userName userIdentity.arn
 | sort - acl_checks
 ```
