@@ -128,7 +128,7 @@ infrastructure contact; insufficient alone to prove cryptojacking.
 
 Two Sysmon Event ID 1 records show PowerShell executing with hidden-window
 and non-interactive options. The command retrieves a value named `debug`
-from `HKLM:\\Software\\Microsoft\\Network`, Base64-decodes it as Unicode,
+from `HKLM:\Software\Microsoft\Network`, Base64-decodes it as Unicode,
 and passes the result to `IEX`. One record shows a PowerShell parent; another
 shows `svchost.exe` hosting the Task Scheduler service as parent, with the
 process running as SYSTEM. Two additional records on `BGIST-L` concern
