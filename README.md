@@ -9,11 +9,18 @@
 
 ## Project overview
 
-This repository documents an evidence-led approach to enterprise intrusion investigation, threat hunting and defensive detection engineering.
+This repository documents an evidence-led approach to enterprise intrusion
+investigation, threat hunting and defensive detection engineering.
 
-It combines reusable SOC/DFIR methodology with a structured enterprise intrusion case study. The case study demonstrates how an analyst can develop hypotheses, identify relevant telemetry, correlate identity and endpoint activity, assess competing explanations, construct a timeline, evaluate impact and translate findings into detection opportunities.
+The BOTSv3 workstream now includes selected upstream event extracts, source
+provenance, a reproducible local analysis pipeline, a fixture-backed findings
+report and Splunk hunt logic for subsequent full-index validation.
 
-**Case-study status:** the Northstar Logistics report is a reconstructed portfolio exercise. Primary event exports, reproducible Splunk result sets and original investigation screenshots are not currently retained. Its incident narrative is illustrative and must not be presented as a verified real-world investigation. The SPL examples are proposed hunt logic, not validated detections.
+**Evidence boundary:** the BOTSv3 records committed here are selected extracts
+from a public BOTSv3-derived fixture repository. They are not the complete
+BOTSv3 archive and were not queried in a live Splunk instance in this
+workspace. The report distinguishes direct observations from assessment and
+does not claim unperformed full-index validation.
 
 ## Project sections
 
@@ -28,8 +35,8 @@ It combines reusable SOC/DFIR methodology with a structured enterprise intrusion
 | [Incident response](06-Incident-Response/response-recommendations.md) | Containment through recovery |
 | [Evidence catalogue](07-Evidence/evidence-catalogue.md) | Evidence register and handling standard |
 | [Timeline](07-Evidence/intrusion-timeline.md) | Timestamp normalisation and event sequencing |
-| [Enterprise intrusion case study](08-Simulated-Investigation/) | Reconstructed Northstar scenario, clearly separated from dataset-backed work |
-| [BOTSv3 investigation](09-BOTSv3-Investigation/) | Splunk dataset provenance, hunt workbook, analyst notebook, evidence handling and detection validation |
+| [Enterprise intrusion case study](08-Simulated-Investigation/) | Reconstructed Northstar scenario |
+| [BOTSv3 investigation](09-BOTSv3-Investigation/) | Attributed event extracts, analysis pipeline, findings and validation hunts |
 
 ## What this project demonstrates
 
@@ -37,14 +44,14 @@ It combines reusable SOC/DFIR methodology with a structured enterprise intrusion
 - Windows Security, Sysmon, PowerShell and network telemetry analysis.
 - Splunk SPL search construction and event correlation.
 - Identity, process, file and network investigation.
-- Evidence handling, timeline construction and confidence assessment.
+- Evidence provenance, integrity checking, timeline construction and confidence assessment.
 - MITRE ATT&CK mapping based on supported behaviour.
 - Detection design, false-positive analysis, tuning and validation.
 - Incident containment, eradication, recovery and lessons learned.
 
 ## Investigation workflow
 
-```mermaid
+\`\`\`mermaid
 flowchart TD
     A[Define scope and investigative questions] --> B[Identify sources and coverage]
     B --> C[Acquire and preserve relevant records]
@@ -57,7 +64,7 @@ flowchart TD
     G --> I[Map supported behaviour to ATT&CK]
     I --> J[Develop, test and tune detections]
     J --> K[Recommend proportionate response actions]
-```
+\`\`\`
 
 ## Tools and technologies
 
@@ -71,6 +78,7 @@ flowchart TD
 | Firewall / proxy logs | Connection disposition and network transfer context |
 | CyberChef | Safe examination of encoded or transformed data |
 | MITRE ATT&CK | Behaviour classification and defensive coverage |
+| Python | Evidence normalization, integrity manifests and repeatable reporting |
 
 ## Evidence and analytical standards
 
@@ -82,12 +90,26 @@ The repository separates:
 - **Inference:** a plausible explanation that is not directly proven.
 - **Unknown:** a question the available evidence cannot resolve.
 
-A timestamp match alone does not establish causation. A process name alone does not establish malicious intent. LSASS access does not prove credential extraction. File creation does not prove data exfiltration. A network event does not prove command-and-control without sufficient protocol, process and session context.
+A timestamp match alone does not establish causation. A process name alone
+does not establish malicious intent. LSASS access does not prove credential
+extraction. File creation does not prove data exfiltration. A network event
+does not prove command-and-control without sufficient protocol, process and
+session context.
 
-No search is described as tested unless it has been executed against a known dataset and the raw results reviewed. Confirm indexes, sourcetypes, field extractions, event coverage, time range and data-model assumptions before relying on SPL.
+No search is described as tested unless it has been executed against a known
+dataset and the raw results reviewed. Confirm indexes, sourcetypes, field
+extractions, event coverage, time range and data-model assumptions before
+relying on SPL.
 
-## Current limitations and next validation work
+## Current project status
 
-The case study needs primary telemetry, source hashes, reproducible searches and original screenshots before it can demonstrate a completed hands-on investigation. The next technical milestone is to validate the event relationships and SPL against a permitted dataset, preserve the underlying records and update each finding only where the evidence supports it.
+The BOTSv3 workstream contains 83 records from six selected, attributed event
+extracts; a Python pipeline for fixture-scoped integrity, normalization,
+inventory and timeline generation; and a findings report with confidence
+limits and follow-up pivots. A GitHub Actions workflow runs the pipeline
+tests.
 
-**Project status:** the Northstar case is reconstructed. The BOTSv3 workstream contains dataset-grounded preparation and hunt logic; local dataset acquisition, search execution, event validation and original screenshots remain outstanding. No BOTSv3 findings are claimed until they are reproduced from the dataset.
+The full BOTSv3 archive has not been downloaded and installed in Splunk in
+this workspace. Full-index searches, raw-event expansion, detection testing
+against the complete dataset and original Splunk screenshots remain the next
+validation stage. See [BOTSv3 validation status](09-BOTSv3-Investigation/validation-status.md).
