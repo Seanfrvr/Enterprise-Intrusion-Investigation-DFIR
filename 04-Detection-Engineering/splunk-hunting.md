@@ -1,76 +1,90 @@
-# Splunk Threat Hunting
+# Splunk Hunt Notebook
 
-## How to use these searches
+These are **untested starting searches**. They are included as query notes, not advertised as finished detections. Before using one, identify the actual index and sourcetype, inspect an unfiltered event, and confirm the field names in your Splunk instance.
 
-These SPL examples are **starting templates**, not validated detections. Confirm your index, sourcetype, field extractions, time range and data coverage before running them. The examples assume common Windows EventCode and Sysmon fields.
+## First: inspect the data
 
-Replace `index=windows` and sourcetypes with values from your Splunk environment.
-
-## Hunt 1 — Suspicious PowerShell process creation
-
-**Question:** Which PowerShell processes have unusual command-line characteristics?
+Start broad enough to confirm that the source is present:
 
 ```spl
-index=windows (sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" OR sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational")
-EventCode=1 (Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
-| eval cmd=lower(CommandLine)
-| where like(cmd,"% -enc %") OR like(cmd,"%encodedcommand%") OR like(cmd,"%downloadstring%") OR like(cmd,"%frombase64string%")
-| table _time host User ParentImage Image CommandLine ProcessGuid
+index=windows earliest=-24h
+| stats count by sourcetype host
+| sort - count
+```
+
+Then inspect one event from the relevant source:
+
+```spl
+index=windows sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" earliest=-24h
+| head 5
+| table _time host EventCode Message
+```
+
+If your environment uses another index or sourcetype, change it. Do not assume the examples' field names match your deployment.
+
+## Hunt 1 — PowerShell process execution
+
+**Question:** Which PowerShell processes have command-line patterns worth reviewing?
+
+**Source:** Sysmon Event ID 1.
+
+```spl
+index=windows sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
+| where match(CommandLine, "(?i)(^|\\s)-(enc|encodedcommand)(\\s|$)|downloadstring|frombase64string")
+| table _time host User ParentImage Image CommandLine ProcessGuid ParentProcessGuid
 | sort 0 _time
 ```
 
-**Review:** Validate the full command, parent process, user, destination host and whether the behaviour is part of approved automation. Encoded PowerShell is not automatically malicious.
+**What I would check next:** full command line, parent process, user, signer/hash and whether the same command appears on other hosts. Encoded arguments are a lead, not a verdict.
 
-## Hunt 2 — Windows event-log clearing
+## Hunt 2 — LSASS process access
 
-**Question:** Are there records indicating that an event log was cleared?
+**Question:** Which processes accessed LSASS, and what was the source process?
+
+**Source:** Sysmon Event ID 10.
+
+```spl
+index=windows sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=10 TargetImage="*\\lsass.exe"
+| table _time host User SourceImage SourceProcessGuid SourceProcessId GrantedAccess CallTrace
+| sort 0 _time
+```
+
+**What I would check next:** source executable path, signature, hash, parent process, granted access mask and EDR context. Event ID 10 records process access; it does not establish that credentials were extracted.
+
+## Hunt 3 — Windows log clearing
+
+**Question:** Are there records that an event log was cleared?
 
 ```spl
 index=windows (EventCode=1102 OR EventCode=104)
-| eval event_channel=case(EventCode=1102, "Security", EventCode=104, "System")
-| table _time host event_channel EventCode Provider_Name SubjectUserName SubjectDomainName Message
+| table _time host EventCode Provider_Name Channel SubjectUserName SubjectDomainName Message
 | sort 0 _time
 ```
 
-**Review:** Event ID 1102 is recorded in the Security channel when the Security audit log is cleared. Event ID 104 is emitted by the Microsoft-Windows-Eventlog provider in the System channel when an event log is cleared. Do not constrain both events to the Security sourcetype; confirm the channel and provider in the raw record, then correlate with administrative activity and central log ingestion.
+Event ID 1102 is associated with the Security audit log being cleared. Event ID 104 is emitted by the Windows Eventlog provider when a log is cleared and is normally found in the System channel. Confirm the provider and channel in the raw event; do not assume the two records share a sourcetype.
 
-## Hunt 3 — Suspicious process access to LSASS
+## Hunt 4 — Failed logons by account and source
 
-**Question:** Which processes accessed the LSASS process according to Sysmon?
-
-```spl
-index=windows sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
-EventCode=10 TargetImage="*\\lsass.exe"
-| table _time host User SourceImage TargetImage GrantedAccess CallTrace SourceProcessGuid
-| sort 0 _time
-```
-
-**Review:** Sysmon Event ID 10 records process access. Validate the source process, access mask, signer, parent process and known security products. Legitimate EDR and diagnostic tools may access LSASS.
-
-## Hunt 4 — Authentication failures by account and source
-
-**Question:** Are there concentrated authentication failures that warrant review?
+**Question:** Which account/source combinations generated repeated failed logons?
 
 ```spl
-index=windows (sourcetype="XmlWinEventLog:Security" OR sourcetype="WinEventLog:Security")
-EventCode=4625
-| stats count as failures earliest(_time) as first_seen latest(_time) as last_seen values(host) as target_hosts by TargetUserName IpAddress
+index=windows sourcetype="XmlWinEventLog:Security" EventCode=4625
+| eval source=coalesce(IpAddress, Source_Network_Address)
+| stats count as failures earliest(_time) as first_seen latest(_time) as last_seen values(host) as target_hosts by TargetUserName source
 | where failures >= 5
 | convert ctime(first_seen) ctime(last_seen)
 | sort - failures
 ```
 
-**Review:** Thresholds are illustrative. Confirm field names for your event format and account for NAT, shared workstations, service accounts and expected authentication failures.
+The threshold is only a starting point. Validate whether your extraction uses `TargetUserName`, `Target_Username`, `IpAddress` or another field. Account for NAT, shared systems, service accounts and normal authentication noise.
 
-## Hunt documentation standard
+## Notes before trusting a result
 
-For each run, record:
-- Investigation question and hypothesis.
-- Index, sourcetype, time range and data coverage.
-- Exact SPL and any field assumptions.
-- Result count and representative event references.
-- Benign explanations and false positives.
-- Follow-up pivots and limitations.
-- Whether the search was tested, tuned or only proposed.
+- Use the raw event to verify every field used in a filter or aggregation.
+- Check whether the relevant audit policy or Sysmon rule was enabled.
+- Keep the search time range explicit when documenting an investigation.
+- Review individual events behind a count; aggregates can hide important context.
+- A zero-result search may mean no activity, missing telemetry, a wrong field or an unsuitable time range.
 
-A search returning zero events does not prove the behaviour did not occur; it may indicate missing telemetry, incorrect field assumptions or an unsuitable time range.
+**Validation status:** none of these searches has been executed against the Northstar case narrative or independently tested in this repository. Do not describe them as validated detections.
