@@ -8,16 +8,16 @@ telemetry. The extracts contain 83 records across six source families. The
 strongest observations are:
 
 1. AWS CloudTrail records attribute successful console sign-ins without MFA
-   and a burst of S3 \`GetBucketAcl\` calls to IAM user \`bstoll\`.
+   and a burst of S3 `GetBucketAcl` calls to IAM user `bstoll`.
 2. DNS records show an internal client querying multiple Coinhive-related
    domains.
-3. Sysmon records show hidden PowerShell execution on \`FYODOR-L\`, including
+3. Sysmon records show hidden PowerShell execution on `FYODOR-L`, including
    a command that retrieves a registry value and decodes it before invoking
-   \`IEX\`.
-4. Azure AD records show successful sign-ins for \`fyodor\` and \`bgist\` from
+   `IEX`.
+4. Azure AD records show successful sign-ins for `fyodor` and `bgist` from
    the same IP address, with Hong Kong location metadata.
 5. Office 365 management records show creation and use of an anonymous link
-   to a \`.lnk\` file, followed by Exchange mailbox modifications.
+   to a `.lnk` file, followed by Exchange mailbox modifications.
 
 These observations are supported by the committed fixture extracts. They
 justify investigation and detection development, but the extracts are partial.
@@ -32,7 +32,7 @@ The fixture inventory contains 83 records:
 
 | Fixture | Records |
 |---|---:|
-| AWS CloudTrail / \`bstoll\` | 20 |
+| AWS CloudTrail / `bstoll` | 20 |
 | BSTOLL-L Windows logon excerpt | 11 |
 | Coinhive DNS excerpt | 12 |
 | FYODOR-L Sysmon excerpt | 4 |
@@ -49,13 +49,13 @@ only the selected extracts, not the complete BOTSv3 index.
 
 ### F-01 — AWS console access without MFA and S3 bucket reconnaissance
 
-**Source:** \`01-aws-recon-bstoll.jsonl\`, records 1–20  
-**Observed identity:** IAM user \`bstoll\`  
-**Observed source IPs:** \`107.77.212.175\`, \`157.97.121.132\`
+**Source:** `01-aws-recon-bstoll.jsonl`, records 1–20  
+**Observed identity:** IAM user `bstoll`  
+**Observed source IPs:** `107.77.212.175`, `157.97.121.132`
 
-Four CloudTrail console sign-in records show \`ConsoleLogin\` with a successful
-response. Their \`additionalEventData.MFAUsed\` value is \`No\`. The same fixture
-contains repeated S3 \`GetBucketAcl\` calls attributed to \`bstoll\`, including
+Four CloudTrail console sign-in records show `ConsoleLogin` with a successful
+response. Their `additionalEventData.MFAUsed` value is `No`. The same fixture
+contains repeated S3 `GetBucketAcl` calls attributed to `bstoll`, including
 requests for multiple bucket names. Several calls occur within the same
 second, which is consistent with scripted or automated enumeration, although
 the records alone do not identify the operator or tool.
@@ -66,7 +66,7 @@ prove compromise. The source IP and user-agent context should be compared
 with known user activity and other CloudTrail actions.
 
 **Next pivots:** inspect all events for the principal ID and access key IDs;
-review \`ListBuckets\`, \`GetObject\`, \`ListObjects\`, IAM policy and access-key
+review `ListBuckets`, `GetObject`, `ListObjects`, IAM policy and access-key
 operations; identify bucket contents and access outcomes; correlate with
 GuardDuty and network telemetry.
 
@@ -75,11 +75,11 @@ reconnaissance; no conclusion on data access or exfiltration.
 
 ### F-02 — BSTOLL-L logon excerpt is insufficient to rule out remote access
 
-**Source:** \`02-bstoll-l-endpoint.jsonl\`, records 1–11  
-**Host:** \`BSTOLL-L\`
+**Source:** `02-bstoll-l-endpoint.jsonl`, records 1–11  
+**Host:** `BSTOLL-L`
 
 The selected excerpt contains successful logon events for SYSTEM (type 5),
-DWM-1 (type 2), and \`bstoll\` (type 11, source address 127.0.0.1). It does not
+DWM-1 (type 2), and `bstoll` (type 11, source address 127.0.0.1). It does not
 show a remote-interactive type 10 event in these 11 records.
 
 **Assessment:** this narrow extract does not demonstrate remote interactive
@@ -96,13 +96,13 @@ claim.
 
 ### F-03 — Coinhive-related DNS activity from an internal client
 
-**Source:** \`03-bstoll-coinhive-cryptojacking.jsonl\`, records 1–12  
-**Client:** \`192.168.247.131\`  
-**Queried names:** \`coinhive.com\` and multiple \`wsNNN.coinhive.com\` names
+**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1–12  
+**Client:** `192.168.247.131`  
+**Queried names:** `coinhive.com` and multiple `wsNNN.coinhive.com` names
 
 The extract contains six DNS query records from the same internal client for
 Coinhive-related domains and six corresponding DNS response records. The
-responses include successful \`NoError\` replies and resolved addresses.
+responses include successful `NoError` replies and resolved addresses.
 
 **Assessment:** the DNS activity is consistent with a client contacting
 Coinhive infrastructure. DNS alone cannot prove that mining code executed,
@@ -121,15 +121,15 @@ infrastructure contact; insufficient alone to prove cryptojacking.
 
 ### F-04 — Hidden PowerShell execution on FYODOR-L
 
-**Source:** \`04-fyodor-powershell-empire.jsonl\`, records 1–4  
-**Host:** \`FYODOR-L\`
+**Source:** `04-fyodor-powershell-empire.jsonl`, records 1–4  
+**Host:** `FYODOR-L`
 
 Two Sysmon Event ID 1 records show PowerShell executing with hidden-window
-and non-interactive options. The command retrieves a value named \`debug\`
-from \`HKLM:\\Software\\Microsoft\\Network\`, Base64-decodes it as Unicode,
-and passes the result to \`IEX\`. One record shows a PowerShell parent; another
-shows \`svchost.exe\` hosting the Task Scheduler service as parent, with the
-process running as SYSTEM. Two additional records on \`BGIST-L\` concern
+and non-interactive options. The command retrieves a value named `debug`
+from `HKLM:\\Software\\Microsoft\\Network`, Base64-decodes it as Unicode,
+and passes the result to `IEX`. One record shows a PowerShell parent; another
+shows `svchost.exe` hosting the Task Scheduler service as parent, with the
+process running as SYSTEM. Two additional records on `BGIST-L` concern
 Dropbox OEM package removal and are not treated as part of this finding.
 
 **Assessment:** the FYODOR-L command pattern is strongly suspicious and
@@ -149,12 +149,12 @@ malicious intent; persistence and payload behaviour require corroboration.
 
 ### F-05 — Azure AD sign-ins for two identities from a shared Hong Kong IP
 
-**Source:** \`05-azure-ad-signin-anomaly.jsonl\`, records 1–20  
-**Identities:** \`fyodor@froth.ly\`, \`bgist@froth.ly\`  
-**IP:** \`104.207.83.63\`
+**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1–20  
+**Identities:** `fyodor@froth.ly`, `bgist@froth.ly`  
+**IP:** `104.207.83.63`
 
 The selected records include successful sign-ins for both identities from
-\`104.207.83.63\`. The event payloads identify Hong Kong as the location.
+`104.207.83.63`. The event payloads identify Hong Kong as the location.
 The records span multiple Microsoft 365 applications.
 
 **Assessment:** shared successful sign-ins from the same IP across two
@@ -174,14 +174,14 @@ fields; moderate for suspicious account use; attribution remains unproven.
 
 ### F-06 — Anonymous OneDrive link activity and Exchange mailbox changes
 
-**Source:** \`06-o365-cloud-account-abuse.jsonl\`, records 1–16
+**Source:** `06-o365-cloud-account-abuse.jsonl`, records 1–16
 
-The extract shows \`bgist@froth.ly\` creating an anonymous sharing link for
-\`BRUCE BIRTHDAY HAPPY HOUR PICS.lnk\`, followed by a \`SharingSet\` event and
-multiple \`AnonymousLinkUsed\` events from different client IPs. Later
-Exchange management events show \`Set-Mailbox\` operations against
-\`klagerfield\` and \`bgist\`. One event records \`StsRefreshTokensValidFrom\`
-for \`klagerfield\`; another sets \`AccountDisabled=True\` for \`bgist\`.
+The extract shows `bgist@froth.ly` creating an anonymous sharing link for
+`BRUCE BIRTHDAY HAPPY HOUR PICS.lnk`, followed by a `SharingSet` event and
+multiple `AnonymousLinkUsed` events from different client IPs. Later
+Exchange management events show `Set-Mailbox` operations against
+`klagerfield` and `bgist`. One event records `StsRefreshTokensValidFrom`
+for `klagerfield`; another sets `AccountDisabled=True` for `bgist`.
 
 **Assessment:** the anonymous sharing activity is consistent with exposure
 of a Windows shortcut file through an externally accessible link. A
@@ -203,17 +203,17 @@ for suspicious intent; no claim of successful malware execution or data theft.
 
 The fixture extracts provide several useful pivots:
 
-- \`bstoll\` appears in AWS CloudTrail, the BSTOLL-L logon excerpt and the
+- `bstoll` appears in AWS CloudTrail, the BSTOLL-L logon excerpt and the
   Azure/Office 365 identity context. The names are related in the source
   scenario, but identity linkage should still be verified against directory
   identifiers and timestamps in the complete data.
-- \`fyodor@froth.ly\` appears in Azure AD and Office 365 records; the
-  \`FYODOR-L\` Sysmon records use the display identity
-  \`AzureAD\\FyodorMalteskesko\`.
-- \`104.207.83.63\` appears in successful Azure AD sign-ins for Fyodor and
+- `fyodor@froth.ly` appears in Azure AD and Office 365 records; the
+  `FYODOR-L` Sysmon records use the display identity
+  `AzureAD\\FyodorMalteskesko`.
+- `104.207.83.63` appears in successful Azure AD sign-ins for Fyodor and
   Bruce and in Office 365 activity attributed to Bruce.
-- \`107.77.212.175\` appears in AWS CloudTrail and Office 365 sharing activity,
-  including a record attributed to \`bstoll\` and anonymous link use.
+- `107.77.212.175` appears in AWS CloudTrail and Office 365 sharing activity,
+  including a record attributed to `bstoll` and anonymous link use.
 
 These relationships are pivots, not proof that all events share a single
 operator. The time windows, identity identifiers, device/session IDs and
@@ -273,7 +273,7 @@ BOTSv3 index or a benign baseline.
 This report is fixture-backed, not a completed full-dataset case. The full
 BOTSv3 archive has not been downloaded or loaded into Splunk in this
 workspace. The next validation pass must run the searches in
-[hunt-workbook.md](hunt-workbook.md) against the complete \`index=botsv3\`,
+[hunt-workbook.md](hunt-workbook.md) against the complete `index=botsv3`,
 inspect raw records, reconcile field extractions, expand each time window,
 capture original Splunk screenshots and update this report only where the
 full dataset supports the finding.
