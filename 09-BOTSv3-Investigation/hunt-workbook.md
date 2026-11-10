@@ -9,7 +9,7 @@
 
 ## 1. Establish the data before hunting
 
-### H-001 — Sourcetype inventory
+### H-001 , Sourcetype inventory
 
 ```spl
 | metadata type=sourcetypes index=botsv3
@@ -22,7 +22,7 @@
 **Use:** identify which source families are actually populated and their time coverage.  
 **Record:** output export, search job ID, execution time, total rows and any missing expected sources.
 
-### H-002 — Host and source distribution
+### H-002 , Host and source distribution
 
 ```spl
 | tstats count WHERE index=botsv3 BY host sourcetype
@@ -32,7 +32,7 @@
 **Use:** establish which hosts generate which telemetry.  
 **Caution:** host values may represent cloud resources, collectors or endpoints; validate entity meaning before correlating.
 
-### H-003 — Event-time range
+### H-003 , Event-time range
 
 ```spl
 index=botsv3 earliest=0
@@ -45,7 +45,7 @@ index=botsv3 earliest=0
 
 ## 2. Cloud control-plane and identity
 
-### H-010 — AWS CloudTrail event distribution
+### H-010 , AWS CloudTrail event distribution
 
 ```spl
 index=botsv3 sourcetype=aws:cloudtrail earliest=0
@@ -60,7 +60,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0
 **Pivot:** inspect the raw events for a selected event name; then group by principal, source IP, user agent, region and error status.  
 **Caution:** high event volume is not maliciousness. Automated service activity is common.
 
-### H-011 — AWS principal activity
+### H-011 , AWS principal activity
 
 ```spl
 index=botsv3 sourcetype=aws:cloudtrail earliest=0
@@ -78,7 +78,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0
 **Pivot:** select one principal and inspect its chronological events. Compare activity with the principal type, role purpose and expected automation.  
 **Caution:** do not treat a service role, assumed role or unfamiliar user agent as malicious without context.
 
-### H-012 — GuardDuty findings
+### H-012 , GuardDuty findings
 
 ```spl
 index=botsv3 sourcetype=aws:cloudwatch:guardduty earliest=0
@@ -95,7 +95,7 @@ index=botsv3 sourcetype=aws:cloudwatch:guardduty earliest=0
 
 ## 3. Microsoft identity and SaaS
 
-### H-020 — Azure AD sign-in activity
+### H-020 , Azure AD sign-in activity
 
 ```spl
 index=botsv3 sourcetype=ms:aad:signin earliest=0
@@ -104,7 +104,7 @@ index=botsv3 sourcetype=ms:aad:signin earliest=0
 
 This is deliberately a schema-discovery search. Review the returned field names and sample raw events before writing an aggregation. Then use the fields actually present to examine user, source IP, application, location, device context and result/status.
 
-### H-021 — Azure AD audit activity
+### H-021 , Azure AD audit activity
 
 ```spl
 index=botsv3 sourcetype=ms:aad:audit earliest=0
@@ -114,7 +114,7 @@ index=botsv3 sourcetype=ms:aad:audit earliest=0
 **Question:** which directory operations and actor/object fields are available?  
 **Pivot:** inspect high-impact operations, actor identity, target object, result and adjacent events. Confirm whether the operation succeeded.
 
-### H-022 — Office 365 management activity
+### H-022 , Office 365 management activity
 
 ```spl
 index=botsv3 (sourcetype=ms:o365:management OR sourcetype=o365:management:activity) earliest=0
@@ -126,7 +126,7 @@ index=botsv3 (sourcetype=ms:o365:management OR sourcetype=o365:management:activi
 
 ## 4. Endpoint and network
 
-### H-030 — Windows event distribution
+### H-030 , Windows event distribution
 
 ```spl
 index=botsv3 sourcetype=wineventlog earliest=0
@@ -137,7 +137,7 @@ index=botsv3 sourcetype=wineventlog earliest=0
 **Question:** which Windows event IDs are present on each host?  
 **Pivot:** choose an event ID relevant to a specific hypothesis, inspect raw records and confirm the channel and provider. Do not assume that a familiar EventCode has identical field extraction across all records.
 
-### H-031 — Sysmon process-event schema
+### H-031 , Sysmon process-event schema
 
 ```spl
 index=botsv3 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" earliest=0
@@ -146,7 +146,7 @@ index=botsv3 sourcetype="xmlwineventlog:microsoft-windows-sysmon/operational" ea
 
 After schema review, inspect process-creation events using the event identifier field confirmed in the raw records. Look for process image, command line, parent image, user, process GUID and parent process GUID where present. Use GUIDs for process lineage where available; PIDs can be reused.
 
-### H-032 — DNS activity
+### H-032 , DNS activity
 
 ```spl
 index=botsv3 sourcetype=stream:dns earliest=0
@@ -155,7 +155,7 @@ index=botsv3 sourcetype=stream:dns earliest=0
 
 After confirming the field names, profile query names, source addresses, response codes and record types. Pivot from a domain to the requesting host and then to HTTP/TCP records where the available identifiers and time context support the relationship.
 
-### H-033 — HTTP activity
+### H-033 , HTTP activity
 
 ```spl
 index=botsv3 sourcetype=stream:http earliest=0
@@ -171,7 +171,7 @@ The following searches are based on fields visible in the selected upstream
 fixture records. Confirm that the full BOTSv3 index has the same field
 extractions before treating results as complete.
 
-### H-040 — AWS console sign-ins without MFA
+### H-040 , AWS console sign-ins without MFA
 
 ```spl
 index=botsv3 sourcetype=aws:cloudtrail earliest=0
@@ -185,7 +185,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0
 Compare source IP, user agent, principal and surrounding CloudTrail activity.
 Do not equate missing MFA with compromise.
 
-### H-041 — S3 bucket ACL enumeration
+### H-041 , S3 bucket ACL enumeration
 
 ```spl
 index=botsv3 sourcetype=aws:cloudtrail earliest=0 eventSource=s3.amazonaws.com eventName=GetBucketAcl
@@ -202,7 +202,7 @@ index=botsv3 sourcetype=aws:cloudtrail earliest=0 eventSource=s3.amazonaws.com e
 Expand the matching principal's raw event sequence and distinguish ACL
 enumeration from subsequent object access.
 
-### H-042 — Coinhive DNS lookups
+### H-042 , Coinhive DNS lookups
 
 ```spl
 index=botsv3 sourcetype=stream:dns earliest=0
@@ -217,7 +217,7 @@ index=botsv3 sourcetype=stream:dns earliest=0
 **Question:** which clients queried Coinhive-related domains, and are there
 matching DNS responses? DNS activity alone does not establish code execution.
 
-### H-043 — Hidden PowerShell and registry-backed execution
+### H-043 , Hidden PowerShell and registry-backed execution
 
 ```spl
 index=botsv3 sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" earliest=0 EventCode=1
@@ -230,7 +230,7 @@ index=botsv3 sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" ea
 which process GUIDs support lineage? Validate the actual sourcetype spelling
 and field names from raw events first.
 
-### H-044 — Azure AD successful sign-ins from a shared IP
+### H-044 , Azure AD successful sign-ins from a shared IP
 
 ```spl
 index=botsv3 sourcetype=ms:aad:signin earliest=0
@@ -248,7 +248,7 @@ index=botsv3 sourcetype=ms:aad:signin earliest=0
 source IP? Enrich with device, session, authentication and conditional-access
 context before assigning risk.
 
-### H-045 — Anonymous sharing and mailbox changes
+### H-045 , Anonymous sharing and mailbox changes
 
 ```spl
 index=botsv3 sourcetype=ms:o365:management earliest=0
