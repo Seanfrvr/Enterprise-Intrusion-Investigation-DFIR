@@ -6,7 +6,7 @@ These SPL examples are **starting templates**, not validated detections. Confirm
 
 Replace `index=windows` and sourcetypes with values from your Splunk environment.
 
-## Hunt 1 — Suspicious PowerShell process creation
+## Hunt 1, Suspicious PowerShell process creation
 
 **Question:** Which PowerShell processes have unusual command-line characteristics?
 
@@ -21,7 +21,7 @@ EventCode=1 (Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
 
 **Review:** Validate the full command, parent process, user, destination host and whether the behaviour is part of approved automation. Encoded PowerShell is not automatically malicious.
 
-## Hunt 2 — Windows event-log clearing
+## Hunt 2, Windows event-log clearing
 
 **Question:** Are there records indicating that an event log was cleared?
 
@@ -34,7 +34,7 @@ index=windows (EventCode=1102 OR EventCode=104)
 
 **Review:** Event ID 1102 is recorded in the Security channel when the Security audit log is cleared. Event ID 104 is emitted by the Microsoft-Windows-Eventlog provider in the System channel when an event log is cleared. Do not constrain both events to the Security sourcetype; confirm the channel and provider in the raw record, then correlate with administrative activity and central log ingestion.
 
-## Hunt 3 — Suspicious process access to LSASS
+## Hunt 3, Suspicious process access to LSASS
 
 **Question:** Which processes accessed the LSASS process according to Sysmon?
 
@@ -47,7 +47,7 @@ EventCode=10 TargetImage="*\\lsass.exe"
 
 **Review:** Sysmon Event ID 10 records process access. Validate the source process, access mask, signer, parent process and known security products. Legitimate EDR and diagnostic tools may access LSASS.
 
-## Hunt 4 — Authentication failures by account and source
+## Hunt 4, Authentication failures by account and source
 
 **Question:** Are there concentrated authentication failures that warrant review?
 
