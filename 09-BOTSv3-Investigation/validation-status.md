@@ -2,27 +2,36 @@
 
 ## Completed
 
-- Reviewed public BOTSv3 scenario documentation and selected six event fixture extracts.
-- Copied the selected JSONL records without changing their event content.
-- Recorded upstream source paths and Git blob SHAs in [dataset provenance](dataset-provenance.md).
-- Added a local Python pipeline for fixture parsing, normalization, local SHA-256 calculation, inventory and UTC timeline generation.
-- Generated a fixture-scoped inventory containing 83 records across six source families.
-- Documented six findings in [analysis report](analysis-report.md), each tied to the selected fixture records and explicit confidence limits.
+1. Reviewed public BOTSv3 project metadata and the public scenario repository.
+2. Obtained six selected BOTSv3-derived JSONL event extracts.
+3. Recorded the original upstream source paths and Git blob SHAs.
+4. Redacted AWS temporary access key identifiers in the current AWS fixture.
+5. Added a Python pipeline for fixture parsing, normalization, SHA-256
+   calculation, inventory and UTC timeline generation.
+6. Added unit tests for expected record counts, source coverage, timeline
+   ordering and integrity output.
+7. Documented six findings with fixture references and confidence limits.
+8. Added Splunk hunt searches for follow-up investigation.
 
 ## Not completed
 
-- Full BOTSv3 archive acquisition and MD5 verification.
-- Installation of the full dataset in Splunk.
-- Full-index event counts, sourcetype inventory or field-extraction validation.
-- Execution of the hunt workbook against the complete `index=botsv3`.
-- Review of all surrounding raw events and complete time windows.
-- Original screenshots captured from a live Splunk search session.
-- Detection performance, false-positive and false-negative testing against a benign baseline.
+1. Full BOTSv3 archive download and MD5 verification.
+2. Installation of the full archive in Splunk.
+3. Full-index event counts and sourcetype inventory.
+4. Field extraction validation against the full index.
+5. Execution of the hunt workbook against the complete \`index=botsv3\`.
+6. Review of all surrounding raw events and complete time windows.
+7. Original screenshots from a live Splunk search session.
+8. Detection performance testing against benign and malicious baselines.
+9. End-to-end validation of the GitHub Actions workflow after the latest edits.
 
-## Interpretation constraints
+## Interpretation limits
 
-The committed extracts are real records copied from a public BOTSv3-derived
-fixture repository, but they are partial. Absence of an event from a fixture
-is not evidence that the event is absent from BOTSv3. All counts in the local
-inventory apply only to the six committed files. Identity and IP matches are
-investigative pivots, not proof of common control or attribution.
+The extracts are selected records from a public BOTSv3-derived source. The
+AWS fixture contains stable redaction labels in place of temporary access key
+identifiers. The current local hashes describe these sanitized bytes.
+
+Absence of an event from a selected extract does not establish that the event
+is absent from BOTSv3. Fixture counts are not full dataset counts. Identity
+and IP matches are investigative pivots, not proof of common control or
+attribution.
