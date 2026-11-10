@@ -26,13 +26,13 @@ EventCode=1 (Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
 **Question:** Are there records indicating that an event log was cleared?
 
 ```spl
-index=windows (sourcetype="XmlWinEventLog:Security" OR sourcetype="WinEventLog:Security")
-(EventCode=1102 OR EventCode=104)
-| table _time host EventCode SubjectUserName SubjectDomainName Message
+index=windows (EventCode=1102 OR EventCode=104)
+| eval event_channel=case(EventCode=1102, "Security", EventCode=104, "System")
+| table _time host event_channel EventCode Provider_Name SubjectUserName SubjectDomainName Message
 | sort 0 _time
 ```
 
-**Review:** Event 1102 is associated with the Security audit log being cleared. Event 104 is emitted by the Windows Eventlog provider when a log is cleared. Verify the provider and channel, then correlate with administrative activity and central log ingestion.
+**Review:** Event ID 1102 is recorded in the Security channel when the Security audit log is cleared. Event ID 104 is emitted by the Microsoft-Windows-Eventlog provider in the System channel when an event log is cleared. Do not constrain both events to the Security sourcetype; confirm the channel and provider in the raw record, then correlate with administrative activity and central log ingestion.
 
 ## Hunt 3 — Suspicious process access to LSASS
 
