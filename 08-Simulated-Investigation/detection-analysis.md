@@ -3,7 +3,7 @@
 
 These searches translate the case's investigative questions into practical hunt logic. They are starting points, not validated detections. The examples assume common Windows XML and Sysmon field extractions; confirm actual field names, index, sourcetype, event coverage and time range before use.
 
-## DET-01 , Service-account logon from an unexpected source
+## DET-01: Service-account logon from an unexpected source
 
 **Objective:** identify successful network logons for a privileged service identity and expose source hosts for baseline comparison.
 
@@ -26,7 +26,7 @@ TargetUserName="svc-backup" LogonType=3
 
 **Important:** field names vary by Windows event format. Some extractions use `Logon_Type`, `Target_Username` or other names. Confirm the raw event before relying on the search. A domain-controller Event ID 4769 is not a substitute for the destination server's Event ID 4624.
 
-## DET-02 , WMI provider spawning command interpreters
+## DET-02: WMI provider spawning command interpreters
 
 **Objective:** identify WMI provider processes spawning command shells or scripting engines.
 
@@ -45,7 +45,7 @@ ParentImage="*\\WmiPrvSE.exe"
 
 **Tuning:** baseline approved management platforms and deployment tooling. WMI is legitimate administration; the parent process alone does not prove remote or malicious execution.
 
-## DET-03 , Unusual access to LSASS
+## DET-03: Unusual access to LSASS
 
 **Objective:** surface processes accessing LSASS and retain context needed to distinguish security tooling from suspicious activity.
 
@@ -60,7 +60,7 @@ index=sysmon EventCode=10 TargetImage="*\\lsass.exe"
 
 **Analyst review:** inspect source process path, signer, hash, parent process, user and granted access mask. Correlate with EDR alerts, file creation and subsequent authentication. Do not infer successful credential extraction from Event ID 10 alone.
 
-## DET-04 , PowerShell discovery patterns
+## DET-04: PowerShell discovery patterns
 
 **Objective:** identify script-block content containing discovery-related commands or suspicious execution patterns.
 
@@ -79,7 +79,7 @@ index=windows sourcetype="XmlWinEventLog:Microsoft-Windows-PowerShell/Operationa
 
 **Tuning:** keyword matches are investigative leads, not a maliciousness verdict. Validate benign administrative scripts and multiline event handling.
 
-## DET-05 , File creation in a staging path
+## DET-05: File creation in a staging path
 
 **Objective:** identify file creation in a monitored directory and retain the creating process.
 
@@ -94,7 +94,7 @@ TargetFilename="*\\ProgramData\\Cache\\*"
 
 **Analyst review:** identify the creating process and compare staged files with source files using names, sizes, hashes and timestamps. Event ID 11 records file creation; it does not independently establish the source file or copy mechanism.
 
-## DET-06 , Outbound network activity
+## DET-06: Outbound network activity
 
 **Objective:** identify outbound network connections and retain process and destination context.
 
@@ -109,7 +109,7 @@ index=sysmon EventCode=3 Initiated=true
 
 **Analyst review:** inspect process attribution, destination, DNS context, firewall disposition, connection state and bytes sent/received. Confirm whether the connection was allowed, blocked or reset using network-control telemetry.
 
-## DET-07 , File staging and outbound activity on the same host
+## DET-07: File staging and outbound activity on the same host
 
 **Objective:** prioritise hosts with file creation in the monitored staging path and outbound connections in the same short time window.
 
