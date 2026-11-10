@@ -40,9 +40,11 @@ The fixture inventory contains 83 records:
 | Office 365 management | 16 |
 | **Total** | **83** |
 
-The Python pipeline parses the raw JSONL, preserves the source file and line
-reference, normalizes common fields, calculates local SHA-256 hashes, and
-generates a UTC timeline for timestamped events. The counts above describe
+The Python pipeline parses the committed JSONL, preserves the source file and
+line reference, normalizes common fields, calculates local SHA-256 hashes, and
+generates a UTC timeline for timestamped events. The AWS fixture has been
+sanitized to replace temporary access key identifiers. The local integrity
+hashes describe the sanitized file bytes. The counts above describe
 only the selected extracts, not the complete BOTSv3 index.
 
 ## Findings
