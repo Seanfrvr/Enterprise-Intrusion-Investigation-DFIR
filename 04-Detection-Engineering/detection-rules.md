@@ -1,55 +1,44 @@
-# Detection Engineering
+# Detection Engineering Notes
 
-## Detection lifecycle
+A hunt query is not automatically a detection. A detection needs a defined data source, stable logic, known benign matches, tuning and an analyst action.
 
-A detection should begin with a specific behaviour and a defensible data requirement, not a list of suspicious executable names.
+## From hunt to detection
 
-1. Define the threat behaviour and investigation question.
-2. Identify the event sources and required fields.
-3. Write the initial analytic.
-4. Test against known benign and suspicious examples.
-5. Measure false positives and data gaps.
-6. Tune thresholds, exclusions and grouping.
-7. Document ownership, severity and response guidance.
-8. Review after changes to logging, infrastructure or attacker tradecraft.
+Before promoting a search, answer:
 
-## Detection specification template
+1. **What behaviour matters?** Describe the activity, not just the executable name.
+2. **Which telemetry proves it?** Name the provider, event ID and required fields.
+3. **What context changes the risk?** Account privilege, host role, parent process, destination or sequence.
+4. **What normally causes this event?** Check IT administration, endpoint security, backup and deployment activity.
+5. **What should the analyst do?** Give a concrete first pivot and escalation condition.
 
-| Field | Description |
+## Example: unusual process access to LSASS
+
+| Element | Specification |
 |---|---|
-| Detection name | Short, behaviour-focused title |
-| Objective | Behaviour the analytic is intended to identify |
-| Data sources | Required event providers, indexes and sourcetypes |
-| Required fields | Fields used for filtering, grouping and context |
-| Logic | SPL or platform-native analytic |
-| ATT&CK mapping | Technique supported by the behaviour |
-| Severity | Impact and likelihood rationale |
-| False positives | Expected benign matches |
-| Tuning | Approved exclusions and thresholds |
-| Validation | Test data, simulation or historical event review |
-| Response | Analyst triage and escalation steps |
-| Limitations | Coverage gaps and known blind spots |
+| Signal | Sysmon Event ID 10 where TargetImage resolves to LSASS |
+| Required context | SourceImage, source PID/GUID, user, GrantedAccess, CallTrace, host |
+| Higher-risk context | Unsigned or unusual executable, writable path, unexpected parent or rare host/account combination |
+| Common benign causes | EDR, antivirus, diagnostic and credential-management software |
+| First triage step | Verify source process signature/hash and compare with approved endpoint tooling |
+| Escalation | Suspicious process lineage, dump artefact, related credential-use activity or EDR confirmation |
+| Limitation | Event ID 10 alone does not prove credential dumping |
 
-## Example detection concepts
+This is a detection concept, not a tested analytic. A production rule needs a validated access-mask strategy, known-good baselines and testing against both benign and suspicious examples.
 
-### 1. Event-log clearing
+## Validation record
 
-**Signal:** Security log clear event or Windows Eventlog clear event.
+For each detection that is actually tested, retain:
 
-**Triage:** Identify the actor, host, channel, process context and whether the action was part of authorised maintenance. Correlate with central log gaps and privileged activity.
+- Query version and date.
+- Index, sourcetype and time range.
+- Event fields confirmed from raw records.
+- Test data source and test method.
+- Positive and negative test results.
+- False positives and tuning changes.
+- Known telemetry gaps.
+- Screenshot or event references that another analyst can review.
 
-### 2. Unusual PowerShell execution
+Do not call a rule tested because it parses, returns events or looks plausible. Record what was tested and what the results demonstrated.
 
-**Signal:** PowerShell with suspicious argument patterns, unusual parent process, rare user/host combination or unexpected network activity.
-
-**Triage:** Retrieve the full command line and script-block content where available. Validate signer, parent process, account role and follow-on activity.
-
-### 3. Suspicious LSASS process access
-
-**Signal:** A process accesses LSASS with an unusual access pattern.
-
-**Triage:** Check process signer, hash, parent, user, access mask, EDR classification and whether a dump file was created. Exclude known security tooling only after validation.
-
-## Validation status
-
-No detection in this repository should be described as production-ready or tested until it has been executed against representative data and reviewed for both true and false positives.
+**Repository status:** this folder contains detection-design notes. No rule here is claimed to be production-ready.
