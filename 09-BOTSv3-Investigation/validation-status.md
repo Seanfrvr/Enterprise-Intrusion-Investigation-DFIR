@@ -13,7 +13,7 @@
 7. Documented six findings with fixture references and confidence limits.
 8. Added Splunk hunt searches for follow-up investigation.
 9. Added a GitHub Actions workflow for repeatable fixture analysis.
-10. GitHub Actions run 41 completed successfully on 10 November 2026.
+10. GitHub Actions run 49 completed successfully on 10 November 2026.
     The Python test step and generated analysis artifact step both passed.
 
 ## Not completed
@@ -22,7 +22,7 @@
 2. Installation of the full archive in Splunk.
 3. Full-index event counts and sourcetype inventory.
 4. Field extraction validation against the full index.
-5. Execution of the hunt workbook against the complete \`index=botsv3\`.
+5. Execution of the hunt workbook against the complete `index=botsv3`.
 6. Review of all surrounding raw events and complete time windows.
 7. Original screenshots from a live Splunk search session.
 8. Detection performance testing against benign and malicious baselines.
