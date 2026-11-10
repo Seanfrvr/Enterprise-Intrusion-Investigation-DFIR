@@ -41,12 +41,18 @@ The analysis covers six files in [data/fixtures](data/fixtures/), containing
 | E-006 | Office 365 management excerpt | 16 |
 | | **Total** | **83** |
 
-The Python pipeline parses the committed JSONL records, preserves source
-filename and line number, normalizes common fields, calculates SHA256 hashes
+The Python pipeline parses all 83 committed JSONL records, preserves source
+filename and line number, normalizes common fields, calculates SHA-256 hashes
 for the current local files and generates a UTC timeline for records with
-usable timestamps. The AWS fixture replaces temporary access key identifiers
-with stable redaction labels. Its local hash therefore describes the sanitized
-file, not the unmodified upstream source.
+usable timestamps. The current run produced 36 timestamped timeline records;
+47 records remain in the normalized output without a usable timestamp. The
+AWS fixture replaces temporary access key identifiers with stable redaction
+labels. Its local hash therefore describes the sanitized file, not the
+unmodified upstream source.
+
+The generated inventory reports six source families and per-fixture counts.
+These are counts from the committed extracts only. The generated timeline
+retains the original fixture name and one-based line number for traceability.
 
 ## Findings
 
@@ -83,13 +89,16 @@ for suspicious reconnaissance; no conclusion on object access or exfiltration.
 **Source:** `02-bstoll-l-endpoint.jsonl`, records 1 to 11  
 **Host:** `BSTOLL-L`
 
-The selected records include successful logons for SYSTEM (type 5), DWM-1
-(type 2) and `bstoll` (type 11, source address `127.0.0.1`). No remote
-interactive type 10 logon appears in this 11 record extract.
+The 11 records are all Security Event ID 4624. They include five SYSTEM
+service logons (type 5), four DWM-1 interactive logons (type 2) and two
+`bstoll` cached interactive logons (type 11) with source address
+`127.0.0.1`. No remote interactive type 10 logon appears in this selected
+excerpt.
 
-**Assessment:** the selected records do not show a remote interactive logon.
-Because this is a narrow excerpt rather than a complete Security event log,
-the absence of type 10 in this file cannot be used to rule out remote access.
+**Assessment:** the records show service, interactive and cached interactive
+logons in this narrow slice. They do not show a type 10 remote interactive
+logon in these 11 records. This is not evidence that remote access did not
+occur elsewhere in the host's Security log.
 
 **Next investigation:** search the complete host history for Security events
 4624 and 4625, including logon types 3, 9 and 10. Review source workstation,
@@ -185,11 +194,14 @@ for suspicious account use; attribution remains unproven.
 **Source:** `06-o365-cloud-account-abuse.jsonl`, records 1 to 16
 
 The extract shows `bgist@froth.ly` creating an anonymous sharing link for
-`BRUCE BIRTHDAY HAPPY HOUR PICS.lnk`, followed by a `SharingSet` event and
-multiple `AnonymousLinkUsed` events from different client IPs. Later
-Exchange management events show `Set-Mailbox` operations against
-`klagerfield` and `bgist`. One event records `StsRefreshTokensValidFrom`
-for `klagerfield`; another sets `AccountDisabled=True` for `bgist`.
+`BRUCE BIRTHDAY HAPPY HOUR PICS.lnk` at 09:58:02 UTC, followed by a
+`SharingSet` event one second later. The fixture then records nine
+`AnonymousLinkUsed` events for that file, including events attributed to
+`anonymous` and one attributed to `bstoll@froth.ly`. The recorded client
+IP addresses vary. Later Exchange management events show three
+`Set-Mailbox` operations: an application account targets `klagerfield`,
+`fyodor@froth.ly` sets `StsRefreshTokensValidFrom` for `klagerfield`,
+and `fyodor@froth.ly` sets `AccountDisabled=True` for `bgist`.
 
 **Assessment:** the audit records establish anonymous sharing activity
 involving a Windows shortcut file and subsequent mailbox administration.
