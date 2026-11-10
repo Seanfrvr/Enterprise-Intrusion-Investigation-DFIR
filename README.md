@@ -2,7 +2,7 @@
 ### SOC Analysis · Threat Hunting · Digital Forensics & Incident Response
 
 <p align="center">
-  <strong>SPLUNK · WINDOWS TELEMETRY · DETECTION ENGINEERING · MITRE ATT&CK</strong>
+ <strong>SPLUNK · WINDOWS TELEMETRY · DETECTION ENGINEERING · MITRE ATT&CK</strong>
 </p>
 
 ---
@@ -53,17 +53,17 @@ does not claim unperformed full-index validation.
 
 \`\`\`mermaid
 flowchart TD
-    A[Define scope and investigative questions] --> B[Identify sources and coverage]
-    B --> C[Acquire and preserve relevant records]
-    C --> D[Inspect raw events and validate fields]
-    D --> E[Correlate identity, process, host and network activity]
-    E --> F{Does evidence support the hypothesis?}
-    F -->|Yes| G[Document observation, confidence and impact]
-    F -->|No / incomplete| H[Record alternatives and evidence gaps]
-    H --> D
-    G --> I[Map supported behaviour to ATT&CK]
-    I --> J[Develop, test and tune detections]
-    J --> K[Recommend proportionate response actions]
+ A[Define scope and investigative questions] --> B[Identify sources and coverage]
+ B --> C[Acquire and preserve relevant records]
+ C --> D[Inspect raw events and validate fields]
+ D --> E[Correlate identity, process, host and network activity]
+ E --> F{Does evidence support the hypothesis?}
+ F -->|Yes| G[Document observation, confidence and impact]
+ F -->|No / incomplete| H[Record alternatives and evidence gaps]
+ H --> D
+ G --> I[Map supported behaviour to ATT&CK]
+ I --> J[Develop, test and tune detections]
+ J --> K[Recommend proportionate response actions]
 \`\`\`
 
 ## Tools and technologies
