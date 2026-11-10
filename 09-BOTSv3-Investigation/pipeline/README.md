@@ -16,20 +16,20 @@ Python 3.10 or later. The pipeline uses only the Python standard library.
 
 From the repository root:
 
-\`\`\`bash
+```bash
 cd 09-BOTSv3-Investigation
 python pipeline/analyze.py
 python -m unittest discover -s pipeline -p "test_*.py" -v
-\`\`\`
+```
 
 ## Outputs
 
 | File | Purpose |
 |---|---|
-| \`output/fixture-integrity.json\` | SHA-256, byte count and record count for each local fixture |
-| \`output/inventory.json\` | Fixture-scoped event and sourcetype counts |
-| \`output/normalized-events.csv\` | Normalized events with original fixture and line references |
-| \`output/timeline.json\` | Timestamped records sorted in UTC |
+| `output/fixture-integrity.json` | SHA-256, byte count and record count for each local fixture |
+| `output/inventory.json` | Fixture-scoped event and sourcetype counts |
+| `output/normalized-events.csv` | Normalized events with original fixture and line references |
+| `output/timeline.json` | Timestamped records sorted in UTC |
 
 The output directory is generated during execution and is not a source of
 original evidence. Delete it and rerun the pipeline to reproduce the files.
@@ -56,6 +56,6 @@ describe the sanitized files, not the original upstream Git blobs.
 ## Full dataset validation
 
 When the complete BOTSv3 archive and Splunk are available, validate the same
-hypotheses against \`index=botsv3\`. Inspect raw events before relying on field
+hypotheses against `index=botsv3`. Inspect raw events before relying on field
 extractions. Preserve the exact SPL, time range, search job ID and exported
 results for each hunt. Keep full-index results separate from fixture outputs.
