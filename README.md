@@ -1,214 +1,175 @@
-# VOLT TYPHOON
-### Enterprise Intrusion Investigation | Security Operations | Digital Forensics & Incident Response
+# Enterprise Intrusion Investigation
+### SOC Analysis · Threat Hunting · Digital Forensics & Incident Response
 
 <p align="center">
-  <strong>SIEM INVESTIGATION · THREAT HUNTING · WINDOWS FORENSICS · MITRE ATT&CK</strong>
+  <strong>SPLUNK · WINDOWS FORENSICS · DETECTION ENGINEERING · MITRE ATT&CK</strong>
 </p>
 
 ---
 
 ## Project Overview
 
-This repository documents a hands-on investigation of a simulated enterprise intrusion attributed to Volt Typhoon.
+This repository presents a defensive investigation of suspicious activity across a simulated enterprise Windows environment.
 
-The investigation reconstructs adversary activity across a Windows-based environment through the examination of security telemetry, process execution records, registry activity, authentication artefacts and file-system operations.
+The work focuses on reconstructing an intrusion from endpoint and security telemetry, assessing the significance of observed behaviour, and translating investigative findings into practical detection and incident-response considerations.
 
-Using Splunk as the primary investigation platform, supported by CyberChef for encoded-data analysis, the investigation follows the progression of an intrusion from initial access through persistence, credential access, lateral movement, data collection, command and control, and cleanup.
+The investigation examines activity across identity and account management, native Windows utilities, Active Directory data, web-server persistence, credential-access behaviour, authentication events, inter-host movement, sensitive-file collection, network proxy configuration and log tampering.
 
-The objective is to demonstrate the analytical process behind a SOC investigation: identifying suspicious activity, validating evidence, correlating events, interpreting adversary behaviour and translating findings into defensive recommendations.
+The emphasis is on **evidence-led analysis**: identifying what the available artefacts establish, distinguishing observation from interpretation, documenting uncertainty, and avoiding conclusions that the evidence cannot support.
 
-**This is an investigation-focused project, not simply a collection of completed lab answers.**
+This repository is organised as a technical case study rather than a sequence of task answers. Detailed reports, ATT&CK mapping, detection engineering, forensic artefact analysis and response recommendations are maintained in separate sections.
 
-> Project status: Private development repository. Publication of room-specific evidence is pending confirmation of applicable permissions.
+## Investigation at a glance
 
----
-
-## Investigation Profile
-
-| Attribute | Details |
+| Area | Focus |
 |---|---|
-| Investigation | Volt Typhoon |
-| Environment | Simulated enterprise network |
-| Primary platform | Splunk Enterprise |
-| Supporting tool | CyberChef |
-| Operating environment | Windows |
-| Investigation discipline | SOC investigation / DFIR |
-| Behaviour framework | MITRE ATT&CK Enterprise |
-| Primary focus | Adversary activity reconstruction |
+| Environment | Simulated enterprise Windows network |
+| Primary SIEM | Splunk Enterprise |
+| Analysis tool | CyberChef |
+| Evidence sources | Windows event, process, registry, file and network-related telemetry |
+| Framework | MITRE ATT&CK Enterprise |
+| Disciplines | SOC investigation, threat hunting, DFIR and detection engineering |
 
-## Executive Summary
+## Investigation objectives
 
-The investigation identified a sequence of activities consistent with a structured enterprise intrusion.
+The investigation is structured around the following objectives:
 
-Observed behaviour included account compromise, administrative account creation, reconnaissance using native Windows utilities, Active Directory database access, web shell deployment, credential-access attempts, movement between servers, collection of financial information and attempts to conceal activity.
+1. Reconstruct the sequence of suspicious activity across affected systems.
+2. Identify the accounts, hosts, processes and artefacts involved.
+3. Analyse the use of native Windows tools and administrative functionality.
+4. Assess potential persistence and defence-evasion mechanisms.
+5. Investigate activity associated with credential access.
+6. Correlate authentication and host telemetry to assess movement between systems.
+7. Determine what sensitive information was accessed or collected.
+8. Assess network configuration changes and potential command-and-control behaviour.
+9. Identify evidence of log tampering and consider its impact on visibility.
+10. Develop detection opportunities and incident-response recommendations.
 
-A recurring characteristic was the abuse of legitimate administrative functionality.
+## Investigation workflow
 
-Rather than relying exclusively on conspicuous malware execution, the activity included PowerShell, WMIC, registry queries, Windows event-log utilities and other native system capabilities.
+The work follows a repeatable analytical process:
 
-This highlights a central challenge for SOC analysts: legitimate tools can become suspicious when used in unusual combinations, by unexpected accounts, on unexpected systems or outside normal administrative workflows.
+1. **Establish context** — identify the relevant hosts, accounts, data sources and investigation scope.
+2. **Form an investigative question** — define what needs to be established before searching.
+3. **Acquire and examine telemetry** — review relevant events and artefacts within the available time range.
+4. **Correlate evidence** — connect process, identity, registry, file and network observations where the data supports it.
+5. **Assess confidence** — separate directly observed facts from interpretation and unresolved hypotheses.
+6. **Map behaviour** — associate supported activity with MITRE ATT&CK techniques.
+7. **Develop defensive outcomes** — document hunting ideas, detection logic, tuning considerations and response actions.
 
-The investigation therefore prioritised behavioural context and event correlation over treating individual executable names as definitive indicators of compromise.
+## Investigation areas
 
-## Investigation Objectives
-
-The investigation aimed to answer the following questions:
-
-1. How was access established within the environment?
-2. Which accounts and systems were involved?
-3. What commands and utilities were executed?
-4. How was continued access maintained?
-5. What evidence of defence evasion was present?
-6. How did the attacker attempt to obtain authentication material?
-7. How did the attacker discover and access additional systems?
-8. What information was targeted for collection?
-9. What command-and-control configuration was identified?
-10. What evidence was removed during cleanup?
-
-## Attack Progression
-
-The investigation is organised around the following adversary activity stages.
-
-| Stage | Activity | Investigation focus |
+| Investigation area | Technical focus | Report |
 |---|---|---|
-| 01 | Initial Access | Account compromise and entry into the environment |
-| 02 | Execution | Command execution and system reconnaissance |
-| 03 | Persistence | Web shell deployment |
-| 04 | Defense Evasion | Removal and disguise of activity artefacts |
-| 05 | Credential Access | Registry reconnaissance and credential extraction attempts |
-| 06 | Discovery & Lateral Movement | Event-log enumeration and movement between servers |
-| 07 | Collection | Identification and copying of financial information |
-| 08 | C2 & Cleanup | Proxy configuration and event-log destruction |
+| Initial access | Identity activity and account changes | [Initial Access](02-Investigation/initial-access.md) |
+| Execution | Process execution and native Windows utilities | [Execution](02-Investigation/execution.md) |
+| Persistence | Web-server and script-based persistence mechanisms | [Persistence](02-Investigation/persistence.md) |
+| Defence evasion | Registry changes, file disguise and trace removal | [Defence Evasion](02-Investigation/defense-evasion.md) |
+| Credential access | Directory data, authentication material and LSASS-related activity | [Credential Access](02-Investigation/credential-access.md) |
+| Discovery and lateral movement | Event-log discovery, authentication and inter-host activity | [Lateral Movement](02-Investigation/lateral-movement.md) |
+| Collection | Access to and staging of sensitive files | [Collection](02-Investigation/collection.md) |
+| Command and control | Proxy configuration and network communications | [Command and Control](02-Investigation/command-and-control.md) |
 
-## Technical Investigation
+The reports will document investigative reasoning and evidence limitations. The presence of a utility or artefact is not treated as proof of malicious intent without supporting context.
 
-The technical reports document the evidence, investigative reasoning and defensive significance of each stage.
+## MITRE ATT&CK
 
-| Report | Description |
-|---|---|
-| [Initial Access](03-Technical-Investigation/initial-access.md) | Account compromise and administrative access |
-| [Execution](03-Technical-Investigation/execution.md) | WMIC, NTDS database access and command execution |
-| [Persistence](03-Technical-Investigation/persistence.md) | Web shell deployment and continued access |
-| [Defense Evasion](03-Technical-Investigation/defense-evasion.md) | Registry modifications, file disguise and environment checks |
-| [Credential Access](03-Technical-Investigation/credential-access.md) | Software reconnaissance, Mimikatz and LSASS analysis |
-| [Discovery & Lateral Movement](03-Technical-Investigation/discovery-lateral-movement.md) | Windows event enumeration and movement between servers |
-| [Collection](03-Technical-Investigation/collection.md) | Financial data identification and file copying |
-| [C2 & Cleanup](03-Technical-Investigation/c2-cleanup.md) | Proxy configuration and event-log clearing |
+Observed behaviours will be mapped to the MITRE ATT&CK Enterprise knowledge base where the available evidence supports a defensible mapping.
 
-## MITRE ATT&CK Analysis
+Each mapping will record:
 
-The investigation uses the MITRE ATT&CK Enterprise framework to classify observed adversary behaviour.
+- Technique identifier and name.
+- Relevant tactic.
+- Supporting observation and evidence reference.
+- Confidence level.
+- Scope and limitations of the assessment.
 
-The mapping distinguishes between:
+**[View ATT&CK mapping](03-MITRE-ATTACK/attack-mapping.md)**
 
-- Observed techniques supported directly by evidence.
-- Behaviour correlated across multiple events.
-- Analytical interpretations that require further validation.
+## Detection engineering and threat hunting
 
-The objective is to connect technical observations to recognised adversary tactics and techniques without overstating what the evidence establishes.
+The detection-engineering work translates investigative observations into defensive hypotheses and testable analytics.
 
-**[View MITRE ATT&CK Mapping](04-MITRE-ATTACK/mitre-mapping.md)**
+The focus areas include:
 
-## Investigation and Detection Engineering
-
-The investigation also considers how the observed behaviour could be identified by a defensive security team.
-
-Areas of interest include:
-
-- Unusual administrative account activity.
-- Suspicious WMIC and PowerShell execution.
-- NTDS database access and copying.
-- Unexpected web shell creation.
-- Registry modifications associated with activity removal.
-- Access to LSASS memory and suspicious memory dumps.
-- Authentication-event enumeration.
-- Unexpected file transfers between servers.
-- Bulk access to sensitive financial information.
-- Changes to proxy configuration.
+- Unusual account and privilege changes.
+- Suspicious use of WMIC and PowerShell.
+- Access to sensitive Active Directory database material.
+- Unexpected web-accessible script execution.
+- Registry modification and removal of activity artefacts.
+- Suspicious access to LSASS and memory-dump files.
+- Unusual authentication and Kerberos activity.
+- Unexpected file transfers between internal systems.
+- Bulk access to sensitive business data.
+- Changes to host proxy configuration.
 - Windows event-log clearing.
 
-**[View Detection Opportunities](05-Detection-Engineering/detection-opportunities.md)**
+The Splunk work will document the investigative question, required data, search logic, field assumptions, expected results, false-positive considerations and validation approach.
 
-## Evidence and Investigation Artefacts
+- [Splunk threat hunting](04-Detection-Engineering/splunk-hunting.md)
+- [Detection rules and specifications](04-Detection-Engineering/detection-rules.md)
 
-Evidence documentation will include relevant Splunk observations, CyberChef analysis and supporting investigative notes where publication is authorised.
+## Digital forensics
 
-Each artefact will be associated with:
+The Windows artefact analysis will explain what relevant telemetry and operating-system artefacts can establish, how they can be correlated, and what limitations apply.
 
-- An evidence identifier.
-- Investigation stage.
-- Source or log type.
-- Observation.
-- Analytical significance.
-- Related MITRE ATT&CK technique, where applicable.
+Areas include Windows event logs, registry data, process execution, file-system activity and authentication traces.
 
-Original screenshots and unmodified evidence will be retained separately from any redacted presentation copies.
+**[View Windows forensic artefacts](05-Digital-Forensics/windows-artifacts.md)**
 
-## Investigation Timeline
+## Evidence management and timeline
 
-A consolidated timeline will correlate the observed activity across the investigation stages.
+Evidence should be traceable to its source and handled consistently. The evidence register and timeline are intended to preserve that traceability.
 
-**[View Intrusion Timeline](08-Timeline/intrusion-timeline.md)**
+- [Evidence catalogue](07-Evidence/evidence-catalogue.md)
+- [Investigation timeline](07-Evidence/intrusion-timeline.md)
 
-## Defensive Assessment
+Times will be recorded with their source and time zone. Unknown values will remain unknown rather than being estimated or invented.
 
-The final assessment will consider:
+## Incident response
 
-- Visibility gaps exposed by the investigation.
-- Opportunities for improved Windows telemetry collection.
-- Detection opportunities for living-off-the-land activity.
-- Credential protection and privileged-access controls.
-- Web server hardening.
-- Monitoring of internal proxy configuration.
-- Event-log protection and centralised log retention.
-- Incident containment and evidence preservation.
+The response assessment will consider containment, eradication, recovery and lessons learned. Recommendations will be linked to validated observations and will account for evidence preservation and investigation integrity.
 
-**[View Incident Response Recommendations](06-Incident-Response/recommendations.md)**
+**[View incident-response recommendations](06-Incident-Response/response-recommendations.md)**
 
----
+## Tools and technologies
 
-## Tools and Technologies
-
-| Technology | Application |
+| Tool or technology | Investigative use |
 |---|---|
-| Splunk Enterprise | SIEM investigation and event analysis |
-| CyberChef | Encoded-data analysis |
-| Windows Event Logs | Authentication and system activity investigation |
-| PowerShell | Script and command-line investigation |
-| Windows Registry | Configuration and activity artefact analysis |
-| MITRE ATT&CK | Adversary behaviour classification |
+| Splunk Enterprise | SIEM searches, event correlation and threat hunting |
+| CyberChef | Examination and transformation of encoded data |
+| Windows Event Logs | Authentication and operating-system activity |
+| PowerShell | Script and command-line activity analysis |
+| Windows Registry | Configuration and activity artefact examination |
+| MITRE ATT&CK | Classification of adversary behaviour |
 
-## Skills Demonstrated
+## Evidence and visual material
 
-- SIEM-based investigation
-- Splunk search and event analysis
-- Windows event-log investigation
-- PowerShell command-line analysis
-- Digital forensics and incident reconstruction
-- Credential-access investigation
-- Active Directory security
-- Threat hunting
-- Lateral movement analysis
-- MITRE ATT&CK mapping
-- Detection and incident response reasoning
-- Technical documentation
+Screenshots and other visual evidence will be included only where they are appropriate for public release. Each published image should have a clear purpose, a descriptive caption and a reference to the relevant analysis.
 
-## Scope and Limitations
+- [Splunk evidence directory](images/splunk/)
+- [CyberChef evidence directory](images/cyberchef/)
 
-This is a simulated investigation performed within an authorised training environment.
+Sensitive information, credentials, personal data and material that is not authorised for redistribution must not be published.
 
-The conclusions are limited to the available telemetry and evidence examined during the exercise.
+## Scope and limitations
 
-The presence of a command or tool does not automatically establish successful execution of every intended objective. For example, analysing an LSASS dump demonstrates credential-access activity, but does not independently prove that credentials were successfully recovered or reused.
+This case study is based on simulated enterprise activity and the telemetry available for examination. Findings are limited to the evidence reviewed.
 
-Likewise, file copying establishes collection activity but does not, without additional evidence, prove successful external exfiltration.
+Several distinctions are important:
 
-The project does not independently establish real-world attribution.
+- A command being present in telemetry does not automatically establish its intended outcome.
+- Analysis of a memory dump does not, by itself, prove that credentials were successfully recovered or reused.
+- Copying files establishes collection or staging activity, not successful external exfiltration.
+- A proxy configuration change does not independently prove that command-and-control communication succeeded.
+- A technique mapping is an analytical classification, not proof of attribution to a particular real-world threat actor.
+
+Conclusions will be labelled according to the strength of their supporting evidence.
 
 ## Disclaimer
 
-This project is intended for defensive cybersecurity education and professional portfolio development.
+This repository is an independently authored cybersecurity case study for defensive education and professional portfolio development. It is not an attribution report and does not claim to represent a real-world incident.
 
-TryHackMe and its training materials remain the property of their respective owners. This project is not affiliated with or endorsed by TryHackMe.
+---
 
-Publication of room-specific findings, screenshots and other training material is subject to the applicable platform policies and intellectual property permissions.
+*Project status: Investigation documentation and technical analysis in development.*
