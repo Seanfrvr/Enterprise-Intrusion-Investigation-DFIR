@@ -1,0 +1,101 @@
+{
+  "scope": "six selected BOTSv3-derived public fixture extracts only; not full index inventory",
+  "total_fixture_events": 83,
+  "by_fixture": {
+    "01-aws-recon-bstoll.jsonl": 20,
+    "02-bstoll-l-endpoint.jsonl": 11,
+    "03-bstoll-coinhive-cryptojacking.jsonl": 12,
+    "04-fyodor-powershell-empire.jsonl": 4,
+    "05-azure-ad-signin-anomaly.jsonl": 20,
+    "06-o365-cloud-account-abuse.jsonl": 16
+  },
+  "by_sourcetype": {
+    "aws:cloudtrail": 20,
+    "_json": 11,
+    "stream:dns": 12,
+    "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational": 4,
+    "ms:aad:signin": 20,
+    "ms:o365:management": 16
+  },
+  "users_by_sourcetype": {
+    "bstoll": [
+      "_json",
+      "aws:cloudtrail"
+    ],
+    "SYSTEM": [
+      "_json"
+    ],
+    "DWM-1": [
+      "_json"
+    ],
+    "AzureAD\\FyodorMalteskesko": [
+      "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+    ],
+    "NT AUTHORITY\\SYSTEM": [
+      "XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+    ],
+    "fyodor@froth.ly": [
+      "ms:aad:signin",
+      "ms:o365:management"
+    ],
+    "bgist@froth.ly": [
+      "ms:aad:signin",
+      "ms:o365:management"
+    ],
+    "ghoppy@froth.ly": [
+      "ms:aad:signin"
+    ],
+    "bstoll@froth.ly": [
+      "ms:aad:signin",
+      "ms:o365:management"
+    ],
+    "pcerf@froth.ly": [
+      "ms:aad:signin"
+    ],
+    "klagerfield@froth.ly": [
+      "ms:aad:signin"
+    ],
+    "mkraeusen@froth.ly": [
+      "ms:o365:management"
+    ],
+    "btun@froth.ly": [
+      "ms:o365:management"
+    ],
+    "anonymous": [
+      "ms:o365:management"
+    ],
+    "DevilFish-ApplicationAccount@namprd17.prod.outlook.com": [
+      "ms:o365:management"
+    ]
+  },
+  "shared_source_ips_and_users": {
+    "107.77.212.175": [
+      "anonymous",
+      "bstoll",
+      "bstoll@froth.ly"
+    ],
+    "157.97.121.132": [
+      "bgist@froth.ly",
+      "bstoll",
+      "bstoll@froth.ly"
+    ],
+    "104.207.83.63": [
+      "bgist@froth.ly",
+      "fyodor@froth.ly"
+    ],
+    "199.66.91.253": [
+      "fyodor@froth.ly",
+      "klagerfield@froth.ly"
+    ],
+    "73.21.45.12": [
+      "btun@froth.ly",
+      "mkraeusen@froth.ly"
+    ]
+  },
+  "limitations": [
+    "Fixture slices are partial and curated; counts are not BOTSv3 dataset totals.",
+    "Some endpoint and DNS fixtures lack timestamps; no time was inferred.",
+    "Identity and IP correlations are investigative pivots, not proof of common control or compromise.",
+    "A narrow endpoint logon fixture cannot establish absence of other logon types in the full dataset."
+  ]
+}
