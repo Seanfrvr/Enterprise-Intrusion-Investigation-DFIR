@@ -41,7 +41,7 @@ The private addresses are reserved documentation values. The external address 19
 - Network authentication involving NS-WEB01.
 - Finance-file access and local staging on NS-FS01.
 - Outbound network telemetry from NS-FS01.
-- Review period: 2026-10-21 08:10–10:05 UTC.
+- Review period: 2026-10-21 08:10to10:05 UTC.
 
 ## Key analytical constraints
 
