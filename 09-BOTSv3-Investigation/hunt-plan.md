@@ -6,15 +6,15 @@ The first searches establish what data exists. Subsequent hunts must be selected
 
 The searches below are starting points. They are not validated detections and must be adjusted after inspecting the actual event structure.
 
-## Phase 1, Dataset orientation
+## Phase 1: Dataset orientation
 
 Run the inventory searches in [Environment and Data Map](environment-and-data-map.md) and retain their output. Confirm the index, time range, hosts, sourcetypes and event counts before proceeding.
 
-## Phase 2, Candidate investigative threads
+## Phase 2: Candidate investigative threads
 
 Select one or two threads only after reviewing source coverage. The following are candidate directions based on the telemetry types documented by Splunk.
 
-### Hunt A, Cloud identity and control-plane activity
+### Hunt A: Cloud identity and control-plane activity
 
 **Question:** Are there unusual identity or administrative actions in the cloud audit records that warrant correlation with endpoint or network activity?
 
@@ -35,7 +35,7 @@ Potential pivots:
 - Access key ID, where present and appropriate to retain.
 - Related activity in CloudWatch, GuardDuty, VPC flow or S3 access logs.
 
-### Hunt B, Microsoft identity activity
+### Hunt B: Microsoft identity activity
 
 **Question:** Does sign-in or directory audit activity show an account, source, application or sequence that merits deeper review?
 
@@ -54,7 +54,7 @@ Potential pivots:
 - Directory object and operation.
 - Related Office 365 management activity.
 
-### Hunt C, Windows process and authentication activity
+### Hunt C: Windows process and authentication activity
 
 **Question:** Is there a process or logon sequence that can be reconstructed across Windows event records?
 
@@ -73,7 +73,7 @@ Potential pivots:
 - Image, command line and parent image.
 - Event time and channel.
 
-### Hunt D, DNS, HTTP and network relationships
+### Hunt D: DNS, HTTP and network relationships
 
 **Question:** Can endpoint, identity or cloud activity be correlated with network resolution and connection records?
 
@@ -92,7 +92,7 @@ Potential pivots:
 - Related endpoint process or cloud identity event.
 - Response, byte-count and connection disposition fields, where available.
 
-## Phase 3, Correlation
+## Phase 3: Correlation
 
 Use stable identifiers wherever possible. Preferred correlation keys include:
 - User / principal identifiers.
@@ -103,7 +103,7 @@ Use stable identifiers wherever possible. Preferred correlation keys include:
 
 A shared timestamp or IP address alone is weak correlation. Record the reason each event is believed to be related.
 
-## Phase 4, Finding standard
+## Phase 4: Finding standard
 
 Each finding must contain:
 
@@ -116,7 +116,7 @@ Each finding must contain:
 7. **Impact:** what is established and what remains unknown.
 8. **Next pivot:** the record or source needed to confirm or refute the assessment.
 
-## Phase 5, Detection engineering
+## Phase 5: Detection engineering
 
 Only promote a hunt into a detection after:
 - The search has been executed against the dataset.
