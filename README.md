@@ -1,92 +1,38 @@
 # Enterprise Intrusion Investigation
-### SOC Analysis · Threat Hunting · Digital Forensics & Incident Response
 
-<p align="center">
-  <strong>SPLUNK · WINDOWS TELEMETRY · DETECTION ENGINEERING · MITRE ATT&CK</strong>
-</p>
+**SOC analysis · Splunk · Windows telemetry · DFIR**
 
----
+A working collection of Windows investigation notes, Splunk hunt examples and evidence-handling references, alongside a reconstructed enterprise case exercise.
 
-## Project overview
+> **Honest project status:** this repository currently contains investigation notes and proposed SPL, not a fully evidenced end-to-end incident investigation. The Northstar case is reconstructed for analytical practice. Its source events, screenshots and Splunk results are not retained, and its searches have not been validated against a dataset. I do not present it as a real incident or completed live investigation.
 
-This repository documents an evidence-led approach to enterprise intrusion investigation, threat hunting and defensive detection engineering.
+## Start here
 
-It combines reusable SOC/DFIR methodology with a structured enterprise intrusion case study. The case study demonstrates how an analyst can develop hypotheses, identify relevant telemetry, correlate identity and endpoint activity, assess competing explanations, construct a timeline, evaluate impact and translate findings into detection opportunities.
-
-**Case-study status:** the Northstar Logistics report is a reconstructed portfolio exercise. Primary event exports, reproducible Splunk result sets and original investigation screenshots are not currently retained. Its incident narrative is illustrative and must not be presented as a verified real-world investigation. The SPL examples are proposed hunt logic, not validated detections.
-
-## Project sections
-
-| Section | Purpose |
+| Section | What is here |
 |---|---|
-| [Case overview](01-Case-Overview/case-overview.md) | Scope, assumptions and evidence standard |
-| [Investigation playbooks](02-Investigation/) | Investigative questions and analysis methods by activity area |
-| [ATT&CK mapping](03-MITRE-ATTACK/attack-mapping.md) | Candidate technique mapping and confidence rules |
-| [Splunk hunting](04-Detection-Engineering/splunk-hunting.md) | Reusable SPL hunt templates |
-| [Detection specifications](04-Detection-Engineering/detection-rules.md) | Detection logic, tuning and validation |
-| [Windows artefacts](05-Digital-Forensics/windows-artifacts.md) | Forensic value and limitations of common artefacts |
-| [Incident response](06-Incident-Response/response-recommendations.md) | Containment through recovery |
-| [Evidence catalogue](07-Evidence/evidence-catalogue.md) | Evidence register and handling standard |
-| [Timeline](07-Evidence/intrusion-timeline.md) | Timestamp normalisation and event sequencing |
-| [Enterprise intrusion case study](08-Simulated-Investigation/) | Incident assessment, findings, timeline, evidence register, detection analysis and ATT&CK mapping |
+| [Investigation notes](02-Investigation/) | Practical pivots for execution, persistence, credential access, lateral movement, collection and C2 |
+| [Splunk hunt notebook](04-Detection-Engineering/splunk-hunting.md) | A small set of Windows/Sysmon SPL examples with field assumptions |
+| [Detection engineering](04-Detection-Engineering/detection-rules.md) | What makes a hunt operationally useful and how to validate it |
+| [Windows artefacts](05-Digital-Forensics/windows-artifacts.md) | Event IDs and artefact interpretation |
+| [Evidence handling](07-Evidence/evidence-catalogue.md) | Evidence recording and integrity notes |
+| [Timeline method](07-Evidence/intrusion-timeline.md) | Building a traceable cross-host timeline |
+| [Northstar case exercise](08-Simulated-Investigation/) | Reconstructed incident narrative, findings and validation plan |
 
-## What this project demonstrates
+## How I approach an investigation
 
-- Investigative question development and hypothesis testing.
-- Windows Security, Sysmon, PowerShell and network telemetry analysis.
-- Splunk SPL search construction and event correlation.
-- Identity, process, file and network investigation.
-- Evidence handling, timeline construction and confidence assessment.
-- MITRE ATT&CK mapping based on supported behaviour.
-- Detection design, false-positive analysis, tuning and validation.
-- Incident containment, eradication, recovery and lessons learned.
+1. Start with the raw event and confirm its provider, channel, timestamp and fields.
+2. Identify the account, host, process or network tuple involved.
+3. Pivot using stable identifiers such as Logon ID and Process GUID.
+4. Check whether the activity fits the host's role and the account's normal use.
+5. Test at least one benign explanation.
+6. Record what the evidence shows separately from what it might mean.
+7. Write a detection only after understanding the data and its limitations.
 
-## Investigation workflow
+## Current limitations
 
-```mermaid
-flowchart TD
-    A[Define scope and investigative questions] --> B[Identify sources and coverage]
-    B --> C[Acquire and preserve relevant records]
-    C --> D[Inspect raw events and validate fields]
-    D --> E[Correlate identity, process, host and network activity]
-    E --> F{Does evidence support the hypothesis?}
-    F -->|Yes| G[Document observation, confidence and impact]
-    F -->|No / incomplete| H[Record alternatives and evidence gaps]
-    H --> D
-    G --> I[Map supported behaviour to ATT&CK]
-    I --> J[Develop, test and tune detections]
-    J --> K[Recommend proportionate response actions]
-```
+- The SPL examples are starting points. They have not been run and tuned against the Northstar case data.
+- The Northstar event sequence is illustrative, not source-backed.
+- No screenshots or raw event exports are included as evidence.
+- Generic investigation notes are reference material, not proof of practical experience.
 
-## Tools and technologies
-
-| Technology | Investigative use |
-|---|---|
-| Splunk Enterprise | Search, correlation and threat hunting |
-| Windows Security logs | Authentication, privileges and object access |
-| Sysmon | Process, network, file and process-access telemetry |
-| PowerShell logging | Script-block and module activity |
-| WMI-Activity logs | WMI client and operation context |
-| Firewall / proxy logs | Connection disposition and network transfer context |
-| CyberChef | Safe examination of encoded or transformed data |
-| MITRE ATT&CK | Behaviour classification and defensive coverage |
-
-## Evidence and analytical standards
-
-The repository separates:
-
-- **Observation:** what a source record directly shows.
-- **Correlation:** a relationship supported by identifiers or multiple records.
-- **Assessment:** the analyst's interpretation of the observations.
-- **Inference:** a plausible explanation that is not directly proven.
-- **Unknown:** a question the available evidence cannot resolve.
-
-A timestamp match alone does not establish causation. A process name alone does not establish malicious intent. LSASS access does not prove credential extraction. File creation does not prove data exfiltration. A network event does not prove command-and-control without sufficient protocol, process and session context.
-
-No search is described as tested unless it has been executed against a known dataset and the raw results reviewed. Confirm indexes, sourcetypes, field extractions, event coverage, time range and data-model assumptions before relying on SPL.
-
-## Current limitations and next validation work
-
-The case study needs primary telemetry, source hashes, reproducible searches and original screenshots before it can demonstrate a completed hands-on investigation. The next technical milestone is to validate the event relationships and SPL against a permitted dataset, preserve the underlying records and update each finding only where the evidence supports it.
-
-**Project status:** investigation methodology and a detailed reconstructed case-study report are documented. Dataset-backed validation and original evidence artefacts remain outstanding.
+The next meaningful improvement is not another document. It is a small investigation using permitted telemetry, with the actual query, raw events, pivots, false leads and screenshots captured as the work is done.
