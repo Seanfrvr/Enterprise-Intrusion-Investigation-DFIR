@@ -1,170 +1,131 @@
 # Investigation Findings
+### Northstar Logistics | Findings and Analysis
 
-<sub>Northstar Logistics · Simulated scenario · Fictional evidence only</sub>
+This report records seven findings across identity, endpoint, file and network activity. Evidence references correspond to the [evidence register](evidence-register.md). Confidence describes the strength of the case narrative's analytical support; primary telemetry is not retained in this portfolio version.
 
-This document records the principal findings in the constructed case. The evidence IDs refer to the synthetic register in [evidence-register.md](evidence-register.md).
-
-## Finding F-01 — Unusual privileged service-account authentication
-
-**Observation**
-
-- At 08:17 UTC, NS-DC01 records a successful network logon for `svc-backup` from NS-WS044.
-- The scenario's fictional service-account baseline lists scheduled backup activity from NS-DC01 and NS-FS01, not interactive employee workstations.
-- At 08:19 UTC, the same account receives elevated privileges in a logon session on NS-FS01.
-
-**Assessment**
-
-The source workstation and timing are inconsistent with the stated service-account baseline. This is suspicious use of a privileged identity and may indicate credential compromise or unauthorised use.
-
-**Confidence:** High within the scenario that the account was used outside its documented pattern; medium that the credentials were compromised. The logs show account use, not how the credentials were obtained.
-
-**Evidence:** E-001, E-002.
-
-**Next steps**
-
-- Review Event IDs 4624, 4648 and 4672 around the same logon session.
-- Compare source workstation, logon type, authentication package and account activity with historical baseline.
-- Check for legitimate maintenance, backup changes or approved administrator activity.
-- Rotate credentials only after mapping service dependencies and preserving evidence.
-
-## Finding F-02 — Remote process execution on the finance server
+## F-01 — Privileged service-account authentication outside baseline
 
 **Observation**
 
-- At 08:26 UTC, NS-FS01 records a process-creation event for `wmiprvse.exe` spawning `cmd.exe`.
-- The command line launches PowerShell with a non-interactive window and a command string that retrieves host and domain information.
-- The event is associated in the scenario with the privileged session identified in F-01.
+- 08:17 UTC: a successful network logon for `svc-backup` is associated with source host NS-WS044 and destination NS-DC01.
+- The documented service-account pattern in this case limits expected activity to scheduled backup operations from designated infrastructure.
+- 08:19 UTC: a privileged logon session associated with the same identity is recorded on NS-FS01.
 
-**Assessment**
+**Analysis**
 
-The process chain is consistent with remote execution through Windows Management Instrumentation (WMI). WMI is a legitimate administration mechanism, so its presence alone is not malicious. The unusual parent-child chain, identity context and timing make this execution suspicious.
+The source workstation is inconsistent with the stated service-account baseline. The subsequent privileged session increases the significance of the anomaly. This may indicate compromised credentials or unauthorised use of the account; the authentication records alone do not establish how the credentials were obtained.
 
-**Confidence:** High that the process chain occurred in the synthetic telemetry; medium-high that it represents unauthorised remote execution.
+**Confidence:** High for the described baseline deviation; medium for credential compromise.
 
-**Evidence:** E-003, E-004.
+**Evidence references:** E-001, E-002.
 
-**Next steps**
+**Further investigation:** correlate logon IDs, source addresses, logon types and authentication packages; review Event IDs 4624, 4648 and 4672; validate approved maintenance and backup activity with system owners.
 
-- Correlate Sysmon Event ID 1 with Security Event ID 4688 if process auditing is enabled.
-- Identify the WMI client, source host and associated network connections.
-- Compare command line, signer, hash and parent process with known administrative tooling.
-- Search for the same process chain on other servers.
-
-## Finding F-03 — Suspicious PowerShell discovery activity
+## F-02 — WMI-associated remote process execution on NS-FS01
 
 **Observation**
 
-- At 08:28 UTC, PowerShell records commands that enumerate local users, domain information and running services.
-- The scenario records script-block logging for the commands, but does not include a complete script file or a cryptographic hash for the script content.
+- 08:26 UTC: `WmiPrvSE.exe` is described as spawning `cmd.exe`, followed by PowerShell.
+- The command context includes host and domain information gathering.
+- The process activity is temporally associated with the privileged session described in F-01.
 
-**Assessment**
+**Analysis**
 
-The commands are consistent with host and domain discovery. They can also appear during legitimate administration. Their execution shortly after the unusual privileged logon and remote process chain increases concern.
+The process lineage is consistent with execution through Windows Management Instrumentation. WMI is a legitimate management interface, but the process chain, account context and timing make the activity suspicious in this case.
 
-**Confidence:** High that the synthetic script-block records contain discovery commands; medium that the activity was malicious.
+**Confidence:** High for the described process relationship; medium-high for unauthorised remote execution.
 
-**Evidence:** E-005.
+**Evidence references:** E-003, E-004.
 
-**Next steps**
+**Further investigation:** correlate Sysmon Event ID 1 with Security Event ID 4688; identify the WMI client and source host; review process hashes, signatures, command lines and related network connections; compare against approved management tooling.
 
-- Correlate PowerShell Event IDs 4103 and 4104 with process-creation records.
-- Recover the full script block and identify any downloaded or decoded content.
-- Review PowerShell logging coverage and whether transcription is enabled.
-- Check whether the same account executed similar commands historically.
-
-## Finding F-04 — LSASS process access consistent with credential-access activity
+## F-03 — PowerShell host and domain discovery
 
 **Observation**
 
-- At 08:34 UTC, Sysmon Event ID 10 records a process-access event targeting `lsass.exe` on NS-FS01.
-- The source process is an unsigned executable running from a temporary directory.
-- The scenario does not contain a memory image, extracted credential material, or evidence of successful authentication using newly obtained secrets.
+- 08:28 UTC: PowerShell script-block records are described as enumerating local users, domain information and running services.
+- The case material does not include a complete script file or cryptographic hash for the script content.
 
-**Assessment**
+**Analysis**
 
-Access to LSASS by an unusual unsigned process is a strong credential-access indicator and warrants immediate investigation. However, process access alone does not prove that credentials were dumped or recovered.
+The command categories are consistent with host and domain discovery. They are also used by legitimate administrators. Their proximity to the unusual service-account activity and WMI-associated execution raises the priority for review.
 
-**Confidence:** High that suspicious LSASS access is represented in the synthetic telemetry; low-to-medium that credential material was successfully extracted.
+**Confidence:** High for the described discovery content; medium for malicious intent.
 
-**Evidence:** E-006.
+**Evidence references:** E-005.
 
-**Next steps**
+**Further investigation:** retrieve complete Event ID 4104 records; correlate with Event ID 4103 and process creation; inspect PowerShell transcription and module logging; compare the activity with historical administrative behaviour.
 
-- Preserve the executable, metadata, hash and relevant endpoint telemetry.
-- Determine granted access rights and process command line.
-- Review EDR alerts and memory-forensic evidence if available.
-- Hunt for subsequent logons that could indicate credential reuse.
-- Do not claim credential theft without corroborating evidence.
-
-## Finding F-05 — Internal movement and access to finance data
+## F-04 — Unusual process access to LSASS
 
 **Observation**
 
-- At 08:43 UTC, NS-WEB01 records a network logon associated with `svc-backup` from NS-FS01.
-- At 08:47 UTC, NS-FS01 records access to a set of finance documents on its local finance-data volume.
-- At 08:51 UTC, a file-creation event records copies of selected documents in `C:\ProgramData\Cache\`.
+- 08:34 UTC: a Sysmon Event ID 10 record is described as showing an unsigned executable from a temporary directory accessing `lsass.exe` on NS-FS01.
+- No memory image, extracted credential material or subsequent authentication using recovered secrets is available in the case material.
 
-**Assessment**
+**Analysis**
 
-The authentication sequence is consistent with lateral movement from NS-FS01 to NS-WEB01. The file records indicate collection or staging of finance data on NS-FS01. The scenario does not establish that the files were opened in full, compressed, or transmitted outside the environment.
+Unusual access to LSASS is a significant credential-access indicator. However, a process-access event does not independently prove credential dumping or successful recovery of secrets.
 
-**Confidence:** High for the represented authentication and file-copy events; medium-high for the interpretation of collection and staging.
+**Confidence:** High for the described suspicious access; low-to-medium for successful credential extraction.
 
-**Evidence:** E-007, E-008, E-009.
+**Evidence references:** E-006.
 
-**Next steps**
+**Further investigation:** preserve the executable and metadata; calculate and reputation-check its hash; inspect signer, path, command line and granted access mask; review EDR telemetry and memory evidence; hunt for possible credential reuse.
 
-- Correlate source and destination logons, logon IDs, SMB sessions and file-server auditing.
-- Compare copied file names, sizes, hashes and timestamps with source files.
-- Determine whether the staging directory was accessed by another process.
-- Check for archive creation, removable-media activity and outbound transfer evidence.
-
-## Finding F-06 — Outbound connection attempt to a documentation-only address
+## F-05 — Internal authentication and finance-data staging
 
 **Observation**
 
-- At 09:02 UTC, network telemetry records an outbound TCP connection attempt from NS-FS01 to 198.51.100.27 on port 8443.
-- The scenario records a connection attempt but does not include a completed packet-level session, application-layer payload or server-side confirmation.
+- 08:43 UTC: NS-WEB01 records a network logon associated with `svc-backup` from NS-FS01.
+- 08:47 UTC: finance documents are described as being accessed on NS-FS01.
+- 08:51 UTC: copies of selected documents are described as being created in `C:\ProgramData\Cache\`.
 
-**Assessment**
+**Analysis**
 
-The timing and source host make the connection relevant to the investigation. The destination belongs to a documentation-only TEST-NET range and is used solely as a fictional indicator in this exercise. The record is not evidence of a real malicious infrastructure endpoint.
+The authentication sequence is consistent with movement between internal systems. The file activity indicates potential collection and local staging. The available case material does not establish that all file contents were read, that an archive was created, or that data was transmitted externally.
 
-**Confidence:** High that the synthetic network record describes an outbound connection attempt; low that it establishes successful command-and-control or exfiltration.
+**Confidence:** High for the described authentication and file-copy sequence; medium-high for the collection/staging interpretation.
 
-**Evidence:** E-010.
+**Evidence references:** E-007, E-008, E-009.
 
-**Next steps**
+**Further investigation:** correlate logon IDs and SMB sessions; compare source and staged file names, sizes and hashes; identify the process responsible for copying; review archive creation, removable media, proxy, firewall and network-transfer records.
 
-- Review firewall disposition, bytes sent/received, connection state and DNS context.
-- Inspect proxy and packet-capture records if available.
-- Correlate the connection with the process responsible for opening the socket.
-- Do not classify the activity as successful exfiltration without transfer evidence.
-
-## Finding F-07 — Incident scope and impact remain unresolved
+## F-06 — Outbound connection attempt from NS-FS01
 
 **Observation**
 
-The scenario includes suspicious activity across three servers and one workstation, but does not include complete domain-wide telemetry, cloud audit logs, packet capture or forensic images.
+- 09:02 UTC: network telemetry is described as recording an outbound TCP connection attempt from NS-FS01 to 198.51.100.27:8443.
+- No completed session, application-layer payload or receiving-server confirmation is included.
 
-**Assessment**
+**Analysis**
 
-The available synthetic evidence supports a multi-host intrusion hypothesis. The full scope, initial credential-compromise mechanism, persistence mechanism and data-loss impact cannot be established.
+The timing and originating host make the connection relevant to the investigation. The destination is within the RFC 5737 TEST-NET-2 documentation range and is used here as a reserved example address, not a live threat indicator. The described event does not establish command-and-control or successful data transfer.
 
-**Confidence:** High that the scenario is incomplete by design; no confidence claim is made about unobserved systems.
+**Confidence:** High for the described connection-attempt record; low for successful external communication.
 
-**Evidence:** E-001 through E-010.
+**Evidence references:** E-010.
 
-**Required follow-up**
+**Further investigation:** review firewall disposition, connection state, bytes sent and received, DNS and proxy records; identify the process opening the connection; seek packet-level or receiving-side confirmation.
 
-- Expand the time window and host scope.
-- Review domain-controller replication, privileged group changes, scheduled tasks, services and remote-management configuration.
-- Review DNS, proxy, firewall and endpoint telemetry for additional hosts.
-- Validate whether any files left the environment.
-- Reassess the incident severity when additional evidence is available.
+## F-07 — Scope and impact cannot yet be determined
 
-## Consolidated conclusion
+**Observation**
 
-The synthetic evidence supports a high-priority investigation into suspected privileged-account misuse, remote execution, discovery, suspicious LSASS access, internal movement, finance-data staging and an outbound connection attempt.
+The case narrative covers a workstation and three servers but does not include complete domain-wide telemetry, cloud audit logs, packet capture, endpoint memory or full disk images.
 
-The conclusion deliberately stops short of claiming confirmed credential theft, confirmed persistence, successful command-and-control, data exfiltration or attribution. Those claims require evidence not present in this scenario.
+**Analysis**
+
+The described sequence warrants investigation as a potential multi-host compromise. The initial access vector, persistence mechanism, full set of affected assets and data-loss impact remain unresolved.
+
+**Confidence:** High that the available case material has material investigative gaps.
+
+**Evidence references:** E-001 through E-010.
+
+**Further investigation:** expand the review period and host scope; inspect privileged group changes, scheduled tasks, services, remote-management settings and domain-controller activity; review DNS, proxy, firewall and endpoint telemetry; determine whether staged files left the environment.
+
+## Overall finding
+
+The case narrative is consistent with privileged-account misuse followed by remote execution, discovery, suspicious LSASS access, internal movement, finance-data staging and an outbound connection attempt.
+
+The evidence described does not support definitive conclusions of credential theft, persistence, successful command-and-control, data exfiltration or actor attribution. Those conclusions require corroborating primary evidence.
