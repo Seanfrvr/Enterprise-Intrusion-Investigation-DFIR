@@ -8,16 +8,16 @@ telemetry. The extracts contain 83 records across six source families. The
 strongest observations are:
 
 1. AWS CloudTrail records attribute successful console sign-ins without MFA
-   and a burst of S3 `GetBucketAcl` calls to IAM user `bstoll`.
+ and a burst of S3 `GetBucketAcl` calls to IAM user `bstoll`.
 2. DNS records show an internal client querying multiple Coinhive-related
-   domains.
+ domains.
 3. Sysmon records show hidden PowerShell execution on `FYODOR-L`, including
-   a command that retrieves a registry value and decodes it before invoking
-   `IEX`.
+ a command that retrieves a registry value and decodes it before invoking
+ `IEX`.
 4. Azure AD records show successful sign-ins for `fyodor` and `bgist` from
-   the same IP address, with Hong Kong location metadata.
+ the same IP address, with Hong Kong location metadata.
 5. Office 365 management records show creation and use of an anonymous link
-   to a `.lnk` file, followed by Exchange mailbox modifications.
+ to a `.lnk` file, followed by Exchange mailbox modifications.
 
 These observations are supported by the committed fixture extracts. They
 justify investigation and detection development, but the extracts are partial.
@@ -49,8 +49,8 @@ only the selected extracts, not the complete BOTSv3 index.
 
 ### F-01, AWS console access without MFA and S3 bucket reconnaissance
 
-**Source:** `01-aws-recon-bstoll.jsonl`, records 1to20  
-**Observed identity:** IAM user `bstoll`  
+**Source:** `01-aws-recon-bstoll.jsonl`, records 1to20 
+**Observed identity:** IAM user `bstoll` 
 **Observed source IPs:** `107.77.212.175`, `157.97.121.132`
 
 Four CloudTrail console sign-in records show `ConsoleLogin` with a successful
@@ -75,7 +75,7 @@ reconnaissance; no conclusion on data access or exfiltration.
 
 ### F-02, BSTOLL-L logon excerpt is insufficient to rule out remote access
 
-**Source:** `02-bstoll-l-endpoint.jsonl`, records 1to11  
+**Source:** `02-bstoll-l-endpoint.jsonl`, records 1to11 
 **Host:** `BSTOLL-L`
 
 The selected excerpt contains successful logon events for SYSTEM (type 5),
@@ -96,8 +96,8 @@ claim.
 
 ### F-03, Coinhive-related DNS activity from an internal client
 
-**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1to12  
-**Client:** `192.168.247.131`  
+**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1to12 
+**Client:** `192.168.247.131` 
 **Queried names:** `coinhive.com` and multiple `wsNNN.coinhive.com` names
 
 The extract contains six DNS query records from the same internal client for
@@ -121,7 +121,7 @@ infrastructure contact; insufficient alone to prove cryptojacking.
 
 ### F-04, Hidden PowerShell execution on FYODOR-L
 
-**Source:** `04-fyodor-powershell-empire.jsonl`, records 1to4  
+**Source:** `04-fyodor-powershell-empire.jsonl`, records 1to4 
 **Host:** `FYODOR-L`
 
 Two Sysmon Event ID 1 records show PowerShell executing with hidden-window
@@ -149,8 +149,8 @@ malicious intent; persistence and payload behaviour require corroboration.
 
 ### F-05, Azure AD sign-ins for two identities from a shared Hong Kong IP
 
-**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1to20  
-**Identities:** `fyodor@froth.ly`, `bgist@froth.ly`  
+**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1to20 
+**Identities:** `fyodor@froth.ly`, `bgist@froth.ly` 
 **IP:** `104.207.83.63`
 
 The selected records include successful sign-ins for both identities from
@@ -204,16 +204,16 @@ for suspicious intent; no claim of successful malware execution or data theft.
 The fixture extracts provide several useful pivots:
 
 - `bstoll` appears in AWS CloudTrail, the BSTOLL-L logon excerpt and the
-  Azure/Office 365 identity context. The names are related in the source
-  scenario, but identity linkage should still be verified against directory
-  identifiers and timestamps in the complete data.
+ Azure/Office 365 identity context. The names are related in the source
+ scenario, but identity linkage should still be verified against directory
+ identifiers and timestamps in the complete data.
 - `fyodor@froth.ly` appears in Azure AD and Office 365 records; the
-  `FYODOR-L` Sysmon records use the display identity
-  `AzureAD\\FyodorMalteskesko`.
+ `FYODOR-L` Sysmon records use the display identity
+ `AzureAD\\FyodorMalteskesko`.
 - `104.207.83.63` appears in successful Azure AD sign-ins for Fyodor and
-  Bruce and in Office 365 activity attributed to Bruce.
+ Bruce and in Office 365 activity attributed to Bruce.
 - `107.77.212.175` appears in AWS CloudTrail and Office 365 sharing activity,
-  including a record attributed to `bstoll` and anonymous link use.
+ including a record attributed to `bstoll` and anonymous link use.
 
 These relationships are pivots, not proof that all events share a single
 operator. The time windows, identity identifiers, device/session IDs and
@@ -238,16 +238,16 @@ behavioural evidence.
 ## Detection opportunities
 
 1. Successful AWS console login for IAM users with MFAUsed=No, enriched with
-   source IP and user-agent history.
+ source IP and user-agent history.
 2. High-rate S3 bucket enumeration by a single principal or access key.
 3. PowerShell with hidden/non-interactive execution that reads registry
-   values and dynamically invokes decoded content.
+ values and dynamically invokes decoded content.
 4. Successful cloud sign-ins for multiple users from one unusual IP, with
-   risk/device/conditional-access enrichment.
+ risk/device/conditional-access enrichment.
 5. Anonymous sharing-link creation for shortcut/script/executable file types,
-   followed by access from multiple external IPs.
+ followed by access from multiple external IPs.
 6. Exchange Set-Mailbox operations that disable accounts or modify token
-   validity, especially when initiated by an unusual actor.
+ validity, especially when initiated by an unusual actor.
 
 These are detection specifications to test and tune. They are not yet
 production-ready detections and have not been measured against the complete
@@ -256,17 +256,17 @@ BOTSv3 index or a benign baseline.
 ## Response recommendations
 
 - Validate affected AWS, Azure AD and Microsoft 365 identities with the
-  relevant identity owners and administrators.
+ relevant identity owners and administrators.
 - If compromise is confirmed, revoke sessions/tokens, rotate credentials,
-  remove unauthorized keys and enforce MFA/conditional access.
+ remove unauthorized keys and enforce MFA/conditional access.
 - Preserve CloudTrail, Azure sign-in/audit, Office 365 audit and endpoint
-  records before retention windows expire.
+ records before retention windows expire.
 - Isolate and acquire FYODOR-L if endpoint compromise is confirmed; preserve
-  the registry value, scheduled task, process and network artefacts.
+ the registry value, scheduled task, process and network artefacts.
 - Revoke anonymous sharing links after preserving their metadata and
-  determining exposure scope.
+ determining exposure scope.
 - Validate mailbox changes and restore only after establishing the intended
-  configuration and business owner approval.
+ configuration and business owner approval.
 
 ## Limitations and next validation
 
