@@ -1,0 +1,15 @@
+# Full BOTSv3 archive and local lab data
+09-BOTSv3-Investigation/data/raw/
+
+# Generated pipeline output
+09-BOTSv3-Investigation/output/
+
+# Local Python state
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local analyst exports
+*.splunk-export
+*.har
