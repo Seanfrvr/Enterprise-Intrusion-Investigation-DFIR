@@ -49,7 +49,7 @@ only the selected extracts, not the complete BOTSv3 index.
 
 ### F-01, AWS console access without MFA and S3 bucket reconnaissance
 
-**Source:** `01-aws-recon-bstoll.jsonl`, records 1to20 
+**Source:** `01-aws-recon-bstoll.jsonl`, records 1 to 20 
 **Observed identity:** IAM user `bstoll` 
 **Observed source IPs:** `107.77.212.175`, `157.97.121.132`
 
@@ -65,7 +65,7 @@ reconnaissance. Lack of MFA increases account exposure but does not itself
 prove compromise. The source IP and user-agent context should be compared
 with known user activity and other CloudTrail actions.
 
-**Next pivots:** inspect all events for the principal ID and access key IDs;
+**Next pivots:** inspect all events for the principal ID, session context and related API activity;
 review `ListBuckets`, `GetObject`, `ListObjects`, IAM policy and access-key
 operations; identify bucket contents and access outcomes; correlate with
 GuardDuty and network telemetry.
@@ -75,7 +75,7 @@ reconnaissance; no conclusion on data access or exfiltration.
 
 ### F-02, BSTOLL-L logon excerpt is insufficient to rule out remote access
 
-**Source:** `02-bstoll-l-endpoint.jsonl`, records 1to11 
+**Source:** `02-bstoll-l-endpoint.jsonl`, records 1 to 11 
 **Host:** `BSTOLL-L`
 
 The selected excerpt contains successful logon events for SYSTEM (type 5),
@@ -96,7 +96,7 @@ claim.
 
 ### F-03, Coinhive-related DNS activity from an internal client
 
-**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1to12 
+**Source:** `03-bstoll-coinhive-cryptojacking.jsonl`, records 1 to 12 
 **Client:** `192.168.247.131` 
 **Queried names:** `coinhive.com` and multiple `wsNNN.coinhive.com` names
 
@@ -121,7 +121,7 @@ infrastructure contact; insufficient alone to prove cryptojacking.
 
 ### F-04, Hidden PowerShell execution on FYODOR-L
 
-**Source:** `04-fyodor-powershell-empire.jsonl`, records 1to4 
+**Source:** `04-fyodor-powershell-empire.jsonl`, records 1 to 4 
 **Host:** `FYODOR-L`
 
 Two Sysmon Event ID 1 records show PowerShell executing with hidden-window
@@ -149,7 +149,7 @@ malicious intent; persistence and payload behaviour require corroboration.
 
 ### F-05, Azure AD sign-ins for two identities from a shared Hong Kong IP
 
-**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1to20 
+**Source:** `05-azure-ad-signin-anomaly.jsonl`, records 1 to 20 
 **Identities:** `fyodor@froth.ly`, `bgist@froth.ly` 
 **IP:** `104.207.83.63`
 
