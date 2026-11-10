@@ -57,6 +57,23 @@ The work follows a repeatable analytical process:
 6. **Map behaviour** — associate supported activity with MITRE ATT&CK techniques.
 7. **Develop defensive outcomes** — document hunting ideas, detection logic, tuning considerations and response actions.
 
+### Analytical process
+
+The diagram below illustrates the investigation method. It is a conceptual workflow, not a representation of a specific event sequence or screenshot from the environment.
+
+```mermaid
+flowchart TD
+    A[Define scope and investigative question] --> B[Identify relevant telemetry]
+    B --> C[Search and examine events]
+    C --> D[Correlate host, identity and activity evidence]
+    D --> E{Does the evidence support the hypothesis?}
+    E -->|Yes| F[Document finding and confidence]
+    E -->|No or incomplete| G[Refine the question or record an evidence gap]
+    G --> C
+    F --> H[Map supported behaviour to MITRE ATT&CK]
+    H --> I[Develop detection and response recommendations]
+```
+
 ## Investigation areas
 
 | Investigation area | Technical focus | Report |
@@ -145,12 +162,14 @@ The response assessment will consider containment, eradication, recovery and les
 
 ## Evidence and visual material
 
-Screenshots and other visual evidence will be included only where they are appropriate for public release. Each published image should have a clear purpose, a descriptive caption and a reference to the relevant analysis.
+The README prioritises the investigation narrative and analytical method. Supporting visuals will be added only when they clarify a technical point.
+
+Screenshots should come from the actual analysis performed for this project, be relevant to a documented finding, and include a caption explaining what the reader should notice. Any illustrative diagram must be labelled as conceptual. Unrelated screenshots sourced from Google or other projects will not be presented as investigation evidence.
 
 - [Splunk evidence directory](images/splunk/)
 - [CyberChef evidence directory](images/cyberchef/)
 
-Sensitive information, credentials, personal data and material that is not authorised for redistribution must not be published.
+Sensitive information, credentials, personal data and material that is not authorised for public release must not be published.
 
 ## Scope and limitations
 
@@ -168,7 +187,7 @@ Conclusions will be labelled according to the strength of their supporting evide
 
 ## Disclaimer
 
-This repository is an independently authored cybersecurity case study for defensive education and professional portfolio development. It is not an attribution report and does not claim to represent a real-world incident.
+This repository contains independently written defensive analysis of simulated enterprise activity for educational and professional portfolio development. It is not a real-world incident report and does not claim attribution to a specific threat actor.
 
 ---
 
