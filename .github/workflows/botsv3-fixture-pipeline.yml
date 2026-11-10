@@ -1,0 +1,34 @@
+name: BOTSv3 fixture pipeline
+
+on:
+  push:
+    paths:
+      - "09-BOTSv3-Investigation/**"
+      - ".github/workflows/botsv3-fixture-pipeline.yml"
+  pull_request:
+    paths:
+      - "09-BOTSv3-Investigation/**"
+      - ".github/workflows/botsv3-fixture-pipeline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run fixture analysis tests
+        working-directory: 09-BOTSv3-Investigation
+        run: python -m unittest discover -s pipeline -p "test_*.py" -v
+      - name: Upload generated analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: botsv3-fixture-analysis
+          path: 09-BOTSv3-Investigation/output/
