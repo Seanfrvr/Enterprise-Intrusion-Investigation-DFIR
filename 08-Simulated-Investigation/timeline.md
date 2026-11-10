@@ -16,11 +16,11 @@
 
 ## Sequence analysis
 
-**1. Identity anomaly (08:17–08:19)**
+**1. Identity anomaly (08:17to08:19)**
 
 A domain-controller authentication record is followed by a network logon on NS-FS01 from the workstation. The destination server's Security event is required to establish the logon; the domain-controller record provides supporting Kerberos context.
 
-**2. WMI-associated execution and discovery (08:26–08:28)**
+**2. WMI-associated execution and discovery (08:26to08:28)**
 
 A process chain involving the WMI provider, command shell and PowerShell is followed by discovery commands. The process tree supports WMI-associated execution, but WMI client and source-host records are needed to confirm remote origin.
 
@@ -28,7 +28,7 @@ A process chain involving the WMI provider, command shell and PowerShell is foll
 
 A process accesses LSASS. This is suspicious in context, but the available record does not establish that a memory dump was created or credentials were recovered.
 
-**4. Inter-host authentication and file staging (08:43–08:51)**
+**4. Inter-host authentication and file staging (08:43to08:51)**
 
 The service identity is associated with a network logon on NS-WEB01 from NS-FS01. Finance-file access and local file creation are then described on NS-FS01. The remote service, file-copy process and relationship between the logon and file activity require corroboration.
 
