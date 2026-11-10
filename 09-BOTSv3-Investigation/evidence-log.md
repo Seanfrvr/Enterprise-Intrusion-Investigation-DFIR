@@ -15,14 +15,14 @@ extracts. The local pipeline calculates SHA-256 for the exact current files.
 
 | Evidence ID | Source | Local reference | Evidential use | Status |
 |---|---|---|---|---|
-| F-01 | AWS CloudTrail | \`01-aws-recon-bstoll.jsonl:1 to 20\` | Console sign-ins, MFA metadata and S3 ACL calls attributed to \`bstoll\` | Collected, AWS identifiers redacted |
-| F-02 | Windows logon metadata | \`02-bstoll-l-endpoint.jsonl:1 to 11\` | Selected BSTOLL-L logon records | Collected fixture extract |
-| F-03 | DNS | \`03-bstoll-coinhive-cryptojacking.jsonl:1 to 12\` | Coinhive-related DNS queries and responses | Collected fixture extract |
-| F-04 | Sysmon | \`04-fyodor-powershell-empire.jsonl:1 to 4\` | PowerShell process creation records | Collected fixture extract |
-| F-05 | Azure AD sign-ins | \`05-azure-ad-signin-anomaly.jsonl:1 to 20\` | Selected successful and failed sign-in records | Collected fixture extract |
-| F-06 | Office 365 management | \`06-o365-cloud-account-abuse.jsonl:1 to 16\` | Sharing link and Exchange mailbox operations | Collected fixture extract |
+| E-001 | AWS CloudTrail | `01-aws-recon-bstoll.jsonl:1 to 20` | Console sign-ins, MFA metadata and S3 ACL calls attributed to `bstoll` | Collected, AWS identifiers redacted |
+| E-002 | Windows logon metadata | `02-bstoll-l-endpoint.jsonl:1 to 11` | Selected BSTOLL-L logon records | Collected fixture extract |
+| E-003 | DNS | `03-bstoll-coinhive-cryptojacking.jsonl:1 to 12` | Coinhive-related DNS queries and responses | Collected fixture extract |
+| E-004 | Sysmon | `04-fyodor-powershell-empire.jsonl:1 to 4` | PowerShell process creation records | Collected fixture extract |
+| E-005 | Azure AD sign-ins | `05-azure-ad-signin-anomaly.jsonl:1 to 20` | Selected successful and failed sign-in records | Collected fixture extract |
+| E-006 | Office 365 management | `06-o365-cloud-account-abuse.jsonl:1 to 16` | Sharing link and Exchange mailbox operations | Collected fixture extract |
 
-The IDs refer to fixture slices. They are not Splunk search job identifiers.
+The evidence IDs refer to fixture slices. They are not finding IDs or Splunk search job identifiers.
 Line numbers refer to the current committed local files.
 
 ## Full-index search register
@@ -37,12 +37,12 @@ SHA-256 hash.
 
 ## Reproducible local outputs
 
-Run \`python pipeline/analyze.py\` from this directory. It generates:
+Run `python pipeline/analyze.py` from this directory. It generates:
 
-- \`output/fixture-integrity.json\`
-- \`output/inventory.json\`
-- \`output/normalized-events.csv\`
-- \`output/timeline.json\`
+- `output/fixture-integrity.json`
+- `output/inventory.json`
+- `output/normalized-events.csv`
+- `output/timeline.json`
 
 These are derived artefacts. The JSONL fixtures remain the source records.
 
@@ -57,15 +57,15 @@ These are derived artefacts. The JSONL fixtures remain the source records.
 
 PowerShell:
 
-\`\`\`powershell
+```powershell
 Get-FileHash .\\event-export.csv -Algorithm SHA256
-\`\`\`
+```
 
 macOS or Linux:
 
-\`\`\`bash
+```bash
 shasum -a 256 event-export.csv
-\`\`\`
+```
 
 Never invent a hash or reuse a hash from a different version of a file.
 
