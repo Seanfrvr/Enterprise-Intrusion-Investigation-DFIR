@@ -1,4 +1,4 @@
-# Enterprise Intrusion Investigation Playbook
+# Enterprise Intrusion Investigation
 ### SOC Analysis · Threat Hunting · Digital Forensics & Incident Response
 
 <p align="center">
@@ -7,11 +7,13 @@
 
 ---
 
-## Project Overview
+## Project overview
 
-This repository documents a structured approach to enterprise intrusion investigation, threat hunting and defensive detection engineering.
+This repository documents an evidence-led approach to enterprise intrusion investigation, threat hunting and defensive detection engineering.
 
-It combines reusable SOC/DFIR methodology with a detailed enterprise intrusion case study. The case study is written in an incident-report format and demonstrates how an analyst can organise findings, correlate identity and endpoint activity, construct a timeline, assess impact and develop detection opportunities.
+It combines reusable SOC/DFIR methodology with a structured enterprise intrusion case study. The case study demonstrates how an analyst can develop hypotheses, identify relevant telemetry, correlate identity and endpoint activity, assess competing explanations, construct a timeline, evaluate impact and translate findings into detection opportunities.
+
+**Case-study status:** the Northstar Logistics report is a reconstructed portfolio exercise. Primary event exports, reproducible Splunk result sets and original investigation screenshots are not currently retained. Its incident narrative is illustrative and must not be presented as a verified real-world investigation. The SPL examples are proposed hunt logic, not validated detections.
 
 ## Project sections
 
@@ -26,58 +28,65 @@ It combines reusable SOC/DFIR methodology with a detailed enterprise intrusion c
 | [Incident response](06-Incident-Response/response-recommendations.md) | Containment through recovery |
 | [Evidence catalogue](07-Evidence/evidence-catalogue.md) | Evidence register and handling standard |
 | [Timeline](07-Evidence/intrusion-timeline.md) | Timestamp normalisation and event sequencing |
-| [Enterprise intrusion case study](08-Simulated-Investigation/) | Incident overview, findings, timeline, evidence register, ATT&CK mapping and detection analysis |
+| [Enterprise intrusion case study](08-Simulated-Investigation/) | Incident assessment, findings, timeline, evidence register, detection analysis and ATT&CK mapping |
 
 ## What this project demonstrates
 
 - Investigative question development and hypothesis testing.
-- Windows event-log and Sysmon analysis.
+- Windows Security, Sysmon, PowerShell and network telemetry analysis.
 - Splunk SPL search construction and event correlation.
-- Process, identity, registry, file and network telemetry analysis.
+- Identity, process, file and network investigation.
 - Evidence handling, timeline construction and confidence assessment.
-- MITRE ATT&CK mapping with explicit evidence requirements.
-- Detection specification, tuning and validation.
+- MITRE ATT&CK mapping based on supported behaviour.
+- Detection design, false-positive analysis, tuning and validation.
 - Incident containment, eradication, recovery and lessons learned.
 
 ## Investigation workflow
 
 ```mermaid
 flowchart TD
-    A[Define scope and investigative question] --> B[Identify data sources and time range]
-    B --> C[Search and examine telemetry]
-    C --> D[Correlate identity, process, host and network activity]
-    D --> E{Does evidence support the hypothesis?}
-    E -->|Yes| F[Document observation and confidence]
-    E -->|No / incomplete| G[Refine search or record evidence gap]
-    G --> C
-    F --> H[Map supported behaviour to ATT&CK]
-    H --> I[Develop detections and response actions]
+    A[Define scope and investigative questions] --> B[Identify sources and coverage]
+    B --> C[Acquire and preserve relevant records]
+    C --> D[Inspect raw events and validate fields]
+    D --> E[Correlate identity, process, host and network activity]
+    E --> F{Does evidence support the hypothesis?}
+    F -->|Yes| G[Document observation, confidence and impact]
+    F -->|No / incomplete| H[Record alternatives and evidence gaps]
+    H --> D
+    G --> I[Map supported behaviour to ATT&CK]
+    I --> J[Develop, test and tune detections]
+    J --> K[Recommend proportionate response actions]
 ```
 
 ## Tools and technologies
 
-| Technology | Use |
+| Technology | Investigative use |
 |---|---|
 | Splunk Enterprise | Search, correlation and threat hunting |
-| Windows Event Logs | Authentication, process and system activity |
-| Sysmon | Process, network, file and registry telemetry |
-| PowerShell logging | Script-block and operational visibility |
+| Windows Security logs | Authentication, privileges and object access |
+| Sysmon | Process, network, file and process-access telemetry |
+| PowerShell logging | Script-block and module activity |
+| WMI-Activity logs | WMI client and operation context |
+| Firewall / proxy logs | Connection disposition and network transfer context |
 | CyberChef | Safe examination of encoded or transformed data |
 | MITRE ATT&CK | Behaviour classification and defensive coverage |
 
-## Evidence, validation and provenance
+## Evidence and analytical standards
 
-The case study uses an incident-report structure and illustrative event descriptions to demonstrate analytical reasoning. Primary event exports, independently reproducible search results and investigation screenshots are not currently included. Accordingly, the case narrative should be treated as a reconstructed portfolio exercise, not as independently verified incident evidence or a claim of a completed live investigation.
+The repository separates:
 
-The repository distinguishes between:
+- **Observation:** what a source record directly shows.
+- **Correlation:** a relationship supported by identifiers or multiple records.
+- **Assessment:** the analyst's interpretation of the observations.
+- **Inference:** a plausible explanation that is not directly proven.
+- **Unknown:** a question the available evidence cannot resolve.
 
-- **Observed:** directly present in a reviewed data source.
-- **Correlated:** supported by multiple related observations.
-- **Inferred:** a plausible interpretation that is not directly proven.
-- **Unknown:** information the available telemetry cannot establish.
+A timestamp match alone does not establish causation. A process name alone does not establish malicious intent. LSASS access does not prove credential extraction. File creation does not prove data exfiltration. A network event does not prove command-and-control without sufficient protocol, process and session context.
 
-SPL examples are starting points. No search is described as tested unless it has been run against a known dataset and its results reviewed. Indexes, sourcetypes, field extractions, CIM mapping and time ranges must be confirmed in each environment.
+No search is described as tested unless it has been executed against a known dataset and the raw results reviewed. Confirm indexes, sourcetypes, field extractions, event coverage, time range and data-model assumptions before relying on SPL.
 
-A command line alone does not prove intent or successful execution. A file copy does not prove external exfiltration. A configuration change does not prove a successful network session. Conclusions require context and corroboration.
+## Current limitations and next validation work
 
-**Project status:** investigation methodology and a reconstructed case-study narrative are documented. Dataset-backed validation and original evidence screenshots remain outstanding.
+The case study needs primary telemetry, source hashes, reproducible searches and original screenshots before it can demonstrate a completed hands-on investigation. The next technical milestone is to validate the event relationships and SPL against a permitted dataset, preserve the underlying records and update each finding only where the evidence supports it.
+
+**Project status:** investigation methodology and a detailed reconstructed case-study report are documented. Dataset-backed validation and original evidence artefacts remain outstanding.
