@@ -40,9 +40,18 @@ This repository currently contains the investigation plan and reproducible start
 
 ## Repository contents
 
+- [Dataset provenance and acquisition record](dataset-provenance.md)
 - [Environment and data map](environment-and-data-map.md)
 - [Hunt plan and SPL](hunt-plan.md)
+- [BOTSv3 hunt workbook](hunt-workbook.md)
+- [Analyst investigation notebook](analyst-notebook.md)
 - [Evidence log](evidence-log.md)
+- [Validation and detection engineering](validation-and-detection-engineering.md)
+- [Investigation report template](report-template.md)
+
+## Published dataset details
+
+The upstream project publishes BOTSv3 as a 320.1 MB pre-indexed Splunk dataset, provides the historical MD5 reference and lists the included sourcetypes and software versions. Installation instructions specify extracting the dataset under `$SPLUNK_HOME/etc/apps`, restarting Splunk and querying `index=botsv3 earliest=0`. Review the [upstream instructions](https://github.com/splunk/botsv3) before installation; the listed Splunk and add-on versions are historical, so compatibility must be checked in the local environment. <https://github.com/splunk/botsv3>
 
 ## Evidence standard
 
