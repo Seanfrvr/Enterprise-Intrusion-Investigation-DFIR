@@ -2,10 +2,9 @@
 
 **Dataset:** Splunk Boss of the SOC v3  
 **Index:** `botsv3`  
-**Execution state:** prepared; not executed in this repository  
-**Purpose:** provide a disciplined starting point for source discovery and hypothesis-led investigation.
+**Purpose:** structured source discovery and hypothesis-led investigation across cloud, identity, endpoint and network telemetry.
 
-> These searches are analyst-authored starting points based on sourcetypes published by the dataset maintainers. They are not reported results, validated detections or claims that a particular event exists. Confirm field extraction and event coverage in the local instance before relying on any field.
+> The workbook progresses from source discovery and schema profiling to focused searches derived from the six investigation findings. Validate field names against raw events and preserve the exact search, time range and result context when using these searches in a Splunk environment.
 
 ## 1. Establish the data before hunting
 
@@ -165,11 +164,9 @@ index=botsv3 sourcetype=stream:http earliest=0
 After confirming fields, examine method, host, URI, user agent, source/destination addresses, response code and byte counts where present. A request path or unusual method is a lead, not proof of exploitation or successful transfer.
 
 
-## 5. Fixture informed hunts for full index validation
+## 5. Finding-led investigation searches
 
-The following searches are based on fields visible in the selected upstream
-fixture records. Confirm that the full BOTSv3 index has the same field
-extractions before treating results as complete.
+These searches translate the six report findings into repeatable Splunk pivots. They cover the key behaviours observed in the source extracts and provide a consistent path for expanding each investigation.
 
 ### H-040: AWS console sign-ins without MFA
 
