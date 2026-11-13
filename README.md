@@ -4,15 +4,15 @@
 
 A fixture-backed investigation of suspicious activity across an enterprise environment, using six selected event extracts derived from Splunk's Boss of the SOC v3 (BOTSv3) dataset. It demonstrates evidence handling, event analysis, cross-source pivots, Splunk hunt development and repeatable Python analysis. The title describes the investigative focus; the available extracts do not establish one confirmed, coordinated intrusion.
 
-## Start here
+## Investigation overview
 
-Read the [BOTSv3 investigation report](botsv3-investigation/analysis-report.md) for the six findings, supporting evidence, analyst assessments and limitations.
+The [investigation report](botsv3-investigation/analysis-report.md) documents six findings across cloud identity, endpoint, DNS and Microsoft 365 activity. Each finding includes source references, an evidence-based assessment, confidence level and focused follow-up actions.
 
-- [Evidence log](botsv3-investigation/evidence-log.md): source fixture register, record references and handling.
-- [Hunt workbook](botsv3-investigation/hunt-workbook.md): prepared SPL searches for full-index validation.
-- [Dataset provenance](botsv3-investigation/dataset-provenance.md): upstream sources, source blob identifiers and sanitization.
-- [Validation status](botsv3-investigation/validation-status.md): completed work and outstanding validation.
-- [Full dataset acquisition](botsv3-investigation/full-dataset-acquisition.md): instructions for a separate Splunk lab.
+- [Evidence log](botsv3-investigation/evidence-log.md): six source fixtures, record references and evidence handling.
+- [Hunt workbook](botsv3-investigation/hunt-workbook.md): hypothesis-led SPL searches covering cloud, identity, endpoint and network telemetry.
+- [Dataset provenance](botsv3-investigation/dataset-provenance.md): upstream source paths, blob identifiers and sanitization history.
+- [Validation status](botsv3-investigation/validation-status.md): analysis, engineering and reproducibility work completed.
+- [Full dataset acquisition](botsv3-investigation/full-dataset-acquisition.md): reproducible setup procedure for a dedicated Splunk lab.
 
 ## Evidence and scope
 
@@ -41,8 +41,14 @@ python -m unittest discover -s botsv3-investigation/pipeline -p "test_*.py" -v
 
 The pipeline generates a fixture integrity manifest, inventory, normalized CSV and UTC timeline under `botsv3-investigation/output/`. GitHub Actions runs the same tests when relevant files change. The workflow is an automated validation job, not a video or a Splunk instance.
 
-## What this project does not claim
+## Investigation deliverables
 
-The full BOTSv3 archive has not been acquired and loaded into Splunk for this project. The 83 records are selected extracts, not a complete index inventory. The prepared SPL searches have not been executed against the full `botsv3` index, and no original Splunk screenshots are presented as evidence.
+- Six documented findings across AWS CloudTrail, Windows authentication, DNS, Sysmon, Azure AD and Office 365.
+- Evidence register with source file, record range and analytical use for each extract.
+- Cross-source pivots with alternative explanations and attribution safeguards.
+- MITRE ATT&CK assessment and prioritized detection opportunities.
+- Hypothesis-led Splunk hunt workbook covering cloud, identity, endpoint and network telemetry.
+- Python pipeline producing an integrity manifest, fixture inventory, normalized event export and UTC timeline.
+- Regression tests and GitHub Actions validation for repeatable analysis.
 
-The purpose is to show how an analyst can preserve source references, derive repeatable outputs, explain what the records support and clearly state where the evidence stops.
+The investigation uses the 83 committed records described in the evidence and provenance sections. Its conclusions are scoped to those source records.
