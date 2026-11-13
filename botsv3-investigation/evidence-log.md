@@ -25,16 +25,6 @@ extracts. The local pipeline calculates SHA-256 for the exact current files.
 The evidence IDs refer to fixture slices. They are not finding IDs or Splunk search job identifiers.
 Line numbers refer to the current committed local files.
 
-## Full-index search register
-
-| Hunt | Search time (UTC) | Time range | Search job ID | Result count | Status |
-|---|---|---|---|---:|---|
-| H-001 onward | Not run | Not established | Not available | Not available | Pending full Splunk dataset |
-
-Do not fill this table with estimated counts. Record the exact SPL and absolute
-time range after each search has been executed. Preserve the export and its
-SHA-256 hash.
-
 ## Reproducible local outputs
 
 Run `python pipeline/analyze.py` from this directory. It generates:
@@ -74,8 +64,6 @@ shasum -a 256 event-export.csv
 
 Never invent a hash or reuse a hash from a different version of a file.
 
-## Screenshots
+## Evidence traceability
 
-Capture screenshots only after running the search in Splunk. Include the
-search bar, time range, result count and relevant fields where practical.
-Screenshots supplement exported records and do not replace them.
+Each evidence ID maps to a committed JSONL fixture and a one-based record range. The investigation report cites these IDs directly so that each observation can be traced back to its source records. Derived pipeline outputs retain fixture names and source line references.
