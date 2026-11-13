@@ -52,19 +52,8 @@ The source blob SHA above points to the unmodified upstream file. The pipeline
 calculates SHA-256 for the exact sanitized local bytes and records it in
 `output/fixture-integrity.json`.
 
-## Acquisition status
+## Provenance summary
 
-| Activity | Status |
-|---|---|
-| Official BOTSv3 project metadata reviewed | Complete |
-| Six public BOTSv3-derived fixture extracts obtained | Complete |
-| Upstream source paths and blob SHAs recorded | Complete |
-| AWS temporary access key identifiers redacted in current fixture | Complete |
-| Local SHA-256 generated for sanitized fixtures | Run pipeline |
-| Full BOTSv3 archive downloaded and MD5 verified | Not performed |
-| Full archive installed in Splunk | Not performed |
-| Full-index searches and raw event review | Not performed |
+The repository contains six public BOTSv3-derived scenario extracts with their upstream paths and original Git blob identifiers recorded above. The AWS fixture uses stable replacement labels for temporary access key identifiers. The analysis pipeline calculates SHA-256 against the exact sanitized files in the repository and records the results in its generated integrity manifest.
 
-The committed records are real records from a public BOTSv3-derived source,
-with the stated AWS identifier redaction. They are selected extracts, not a
-complete acquisition of the BOTSv3 archive.
+The investigation report and evidence register identify the records used for each finding. The selected extracts provide the source material for this documented analysis; they are not presented as a complete copy of the historical BOTSv3 archive.
