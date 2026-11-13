@@ -11,7 +11,7 @@
 7. Built a Python pipeline for fixture parsing, normalization, SHA-256 integrity calculation, inventory and UTC timeline generation.
 8. Added regression tests for record counts, source coverage, timeline ordering, integrity output and AWS identifier sanitization.
 9. Added GitHub Actions to run the pipeline tests and generate fixture-scoped analysis artefacts.
-10. Manually ran the GitHub Actions workflow successfully. The workflow processed 83 records and generated the inventory, integrity manifest, normalized CSV and UTC timeline, including 36 timestamped records.
+10. Configured GitHub Actions to run the regression suite when relevant repository files change. The workflow definition is present in the repository; a successful run for this documentation branch has not been independently verified.
 
 ## Analysis scope
 
