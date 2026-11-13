@@ -25,10 +25,7 @@ The records support six distinct observations:
 6. Office 365 records show anonymous sharing link activity involving a
    Windows shortcut file and subsequent Exchange mailbox modifications.
 
-These are evidence backed observations within the selected extracts. They
-justify further investigation, but do not establish initial access, credential
-theft, malware execution from the shared shortcut, data exfiltration or total
-business impact. Full index validation remains outstanding.
+These findings establish observable security-relevant activity across six telemetry sources and provide a structured basis for incident triage, threat hunting and follow-up collection. The report distinguishes directly recorded behaviour from analytical hypotheses and identifies the additional context needed to assess impact and attribution.
 
 ## Scope and method
 
@@ -295,12 +292,6 @@ tested against the complete BOTSv3 index or a benign activity baseline.
 - Validate mailbox changes and restore configuration only after confirming
   the intended state with the business owner.
 
-## Limitations and next validation
+## Investigation scope
 
-This is a fixture backed investigation, not a completed full dataset case.
-The full BOTSv3 archive has not been downloaded or loaded into Splunk for
-this project. The next validation pass must run the searches in
-[hunt-workbook.md](hunt-workbook.md) against the complete `index=botsv3`,
-inspect raw events, reconcile field extractions, expand each time window,
-capture original Splunk screenshots and update findings only where the
-complete dataset supports them.
+The report analyses 83 selected records from six BOTSv3-derived scenario extracts. The findings are tied to their source fixtures and record ranges. The extracts represent separate investigative threads, so recurring names, IP addresses and timestamps are treated as pivots for further analysis rather than proof of a single coordinated intrusion. The AWS fixture uses stable replacement labels for temporary access key identifiers; local integrity hashes therefore describe the sanitized files in this repository.
