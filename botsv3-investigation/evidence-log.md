@@ -36,10 +36,11 @@ Run `python pipeline/analyze.py` from this directory. It generates:
 
 These are derived artefacts. The JSONL fixtures remain the source records.
 
-The successful workflow run processed the six committed extracts and produced
-an inventory of 83 records. The generated UTC timeline contains 36 records;
-47 records have no usable timestamp and remain available in the normalized
-CSV. The pipeline does not assign times to those records.
+The six committed extracts contain 83 records. The pipeline is designed to
+produce an inventory covering those records and a UTC timeline for records
+with usable timestamps. Based on the fixture data, 36 records have usable
+timestamps and 47 do not. Records without usable timestamps remain in the
+normalized CSV; the pipeline does not assign times to them.
 
 ## Integrity procedure for future exports
 
