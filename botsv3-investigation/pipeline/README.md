@@ -7,9 +7,6 @@ It produces a fixture inventory, normalized event table, integrity manifest
 and UTC timeline. The current fixture set contains 83 records: 36 have usable
 timestamps and 47 do not.
 
-It does not download the full BOTSv3 archive, install Splunk or query the
-`botsv3` index.
-
 ## Requirements
 
 Python 3.10 or later. The pipeline uses only the Python standard library.
@@ -48,11 +45,8 @@ describe the sanitized files, not the original upstream bytes.
 4. Shared usernames and IP addresses are pivots, not proof of common control.
 5. A selected fixture cannot support a negative finding about the full dataset.
 6. The inventory key `sourcetypes_by_user` maps each observed user string to the sourcetypes in which it appears.
-6. Every report finding must identify its fixture and record range.
+7. Every report finding identifies its fixture and record range.
 
-## Full dataset validation
+## Relationship to Splunk hunting
 
-When the full archive and a compatible Splunk lab are available, validate
-the hypotheses against `index=botsv3`. Inspect raw events before relying on
-field extractions. Preserve exact SPL, time range, search job ID and exported
-results. Keep full index results separate from fixture outputs.
+The pipeline provides repeatable processing and integrity checks for the committed fixture set. The companion [hunt workbook](../hunt-workbook.md) contains SPL searches for source discovery and hypothesis-led investigation in a Splunk environment. Keep Splunk search exports and their execution metadata as separate evidence artefacts from the generated fixture outputs.
