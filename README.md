@@ -39,7 +39,7 @@ python botsv3-investigation/pipeline/analyze.py
 python -m unittest discover -s botsv3-investigation/pipeline -p "test_*.py" -v
 ```
 
-The pipeline generates a fixture integrity manifest, inventory, normalized CSV and UTC timeline under `botsv3-investigation/output/`. GitHub Actions runs the same tests when relevant files change. The workflow is an automated validation job, not a video or a Splunk instance.
+The pipeline generates a fixture integrity manifest, inventory, normalized CSV and UTC timeline under `botsv3-investigation/output/`. GitHub Actions runs the regression suite when relevant files change.
 
 ## Investigation deliverables
 
