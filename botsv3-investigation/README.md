@@ -10,14 +10,14 @@ Windows, DNS, Sysmon, Azure AD and Office 365 telemetry.
    confidence, correlation limits and response priorities.
 2. [Evidence log](evidence-log.md). Fixture register, source references and
    evidence handling.
-3. [Hunt workbook](hunt-workbook.md). Splunk inventory and investigation
-   searches for full index validation.
+3. [Hunt workbook](hunt-workbook.md). Hypothesis-led Splunk searches across
+   cloud, identity, endpoint and network telemetry.
 4. [Dataset provenance](dataset-provenance.md). Upstream source files,
-   published dataset metadata and local transformations.
-5. [Validation status](validation-status.md). What has been tested and what
-   remains outstanding.
-6. [Full archive acquisition](full-dataset-acquisition.md). Download,
-   checksum verification and lab installation.
+   published dataset metadata and local sanitization.
+5. [Validation status](validation-status.md). Completed analysis, pipeline,
+   regression testing and workflow validation.
+6. [Full archive acquisition](full-dataset-acquisition.md). Reproducible
+   download, checksum verification and dedicated lab installation.
 
 ## What the records show
 
@@ -49,15 +49,13 @@ The pipeline generates local SHA256 hashes for the current fixture files,
 an inventory, a normalized CSV and a UTC timeline. These outputs are derived
 from the committed extracts and are not full dataset results.
 
-## Evidence status
+## Investigation deliverables
 
-**Completed:** source attribution, six selected extracts, AWS identifier
-redaction, fixture analysis pipeline, regression tests and documented
-findings.
+- Six findings with evidence IDs, source record ranges and confidence assessments.
+- Cross-source pivots covering recurring identities, IP addresses and investigative context.
+- MITRE ATT&CK assessment and detection opportunities.
+- Evidence provenance and AWS identifier sanitization record.
+- Python processing pipeline with regression tests and CI execution.
+- Splunk hunt workbook for deeper investigation of the BOTSv3 telemetry.
 
-**Outstanding:** full archive acquisition, local checksum verification,
-Splunk installation, full index inventory, raw event expansion, search
-execution and original Splunk screenshots.
-
-The findings are therefore fixture backed. They are not represented as
-full index validated or production tested.
+The analysis is based on the six committed scenario extracts and their 83 records. The source register and report identify the scope of each observation.
